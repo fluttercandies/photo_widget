@@ -1,14 +1,32 @@
 # photo_widget
 
-A new Flutter package project.
+For photo_manager extension
 
-## Getting Started
+## Feature
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+Unlike photo, this library extracts various widget units so that any widget can be extracted and put into its own project. It can also be used to quickly create your own style of image/video selector.
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+It has not been submitted to pub, before submission, there is no guarantee that the api will not change
+
+## Widgets
+
+### AssetPathWidget
+
+Display `AssetPathEntity`
+
+| name            | type               | requied | default value                | description                                                                                                                                                    |
+| --------------- | ------------------ | ------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| path            | AssetPathEntity    | true    |                              | Concepts in photo_manager, used to describe albums                                                                                                             |
+| buildItem       | AssetWidgetBuilder | false   |                              |
+| rowCount        | int                | false   | 4                            | There are several items in a row, see GridView for details                                                                                                     |
+| thumbSize       | int                | false   | 100                          | The size of each item thumbnail                                                                                                                                |
+| scrollingWidget | Widget             | false   | const ScrollingPlaceholder() | Since loading an image is a resource-consuming operation, you only start loading images when the scrolling stops, with a placeholder before loading the image. |
+
+### AssetWidget
+
+Display `AssetEntity`
+
+| name      | type        | requied | default value | description                                       |
+| --------- | ----------- | ------- | ------------- | ------------------------------------------------- |
+| asset     | AssetEntity | true    |               | Concepts in photo_manager, used to describe asset |
+| thumbSize | int         | false   | 100           | The item thumb size.                              |
