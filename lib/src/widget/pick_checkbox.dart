@@ -8,8 +8,8 @@ class PickedCheckbox extends StatelessWidget {
   final ValueChanged<bool> onChanged;
   const PickedCheckbox({
     Key key,
-    this.checkIndex,
-    this.onChanged,
+    @required this.checkIndex,
+    @required this.onChanged,
   }) : super(key: key);
 
   @override

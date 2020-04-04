@@ -57,7 +57,7 @@ class PickAssetWidget extends StatelessWidget {
     @required this.provider,
     this.thumbSize = 100,
     this.onTap,
-    this.pickColorMaskBuilder,
+    this.pickColorMaskBuilder = PickColorMask.buildWidget,
     this.pickedCheckboxBuilder,
   }) : super(key: key);
 

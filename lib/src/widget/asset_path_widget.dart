@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_widget/src/collection/observer_map.dart';
 import 'asset_widget.dart';
 import 'scrolling_placeholder.dart';
 

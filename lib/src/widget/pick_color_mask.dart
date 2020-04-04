@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
-typedef Widget PickColorMaskBuilder(
-  BuildContext context,
-  bool picked,
-);
+typedef Widget PickColorMaskBuilder(BuildContext context, bool picked);
 
 class PickColorMask extends StatelessWidget {
   final Color maskColor;
@@ -23,6 +20,12 @@ class PickColorMask extends StatelessWidget {
         color: picked ? maskColor : Colors.transparent,
         duration: const Duration(milliseconds: 300),
       ),
+    );
+  }
+
+  static PickColorMask buildWidget(BuildContext context, bool picked) {
+    return PickColorMask(
+      picked: picked,
     );
   }
 }
