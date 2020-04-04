@@ -81,7 +81,7 @@ class PickAssetWidget extends StatelessWidget {
         final pickIndex = provider.pickIndex(asset);
         return pickedCheckboxBuilder?.call(context, pickIndex) ??
             PickedCheckbox(
-              onChanged: (value) {
+              onClick: () {
                 provider.pickEntity(asset);
               },
               checkIndex: pickIndex,

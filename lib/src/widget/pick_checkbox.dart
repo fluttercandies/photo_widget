@@ -5,38 +5,58 @@ typedef Widget PickedCheckboxBuilder(BuildContext context, int checkIndex);
 
 class PickedCheckbox extends StatelessWidget {
   final int checkIndex;
-  final ValueChanged<bool> onChanged;
+  final VoidCallback onClick;
+  final AlignmentGeometry alignment;
+  final double radius;
+  final Color pickedColor;
+  final Color unpickColor;
+  final Color textColor;
+  final double fontSize;
+  final EdgeInsets padding;
+  final double size;
+
   const PickedCheckbox({
     Key key,
     @required this.checkIndex,
-    @required this.onChanged,
+    @required this.onClick,
+    this.alignment = Alignment.topRight,
+    this.radius = 30,
+    this.pickedColor = Colors.blue,
+    this.unpickColor = Colors.white,
+    this.textColor = Colors.white,
+    this.fontSize = 12,
+    this.padding = const EdgeInsets.all(8.0),
+    this.size = 20,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final checked = checkIndex != -1;
     final checkText = !checked ? "" : (checkIndex + 1).toString();
+    final borderRadius = BorderRadius.circular(radius);
     final decoration = !checked
         ? BoxDecoration(
             border: Border.all(
               width: 1,
-              color: Colors.grey,
+              color: unpickColor,
             ),
+            borderRadius: borderRadius,
           )
         : BoxDecoration(
-            color: Colors.blue,
+            color: pickedColor,
+            borderRadius: borderRadius,
           );
     return Align(
-      alignment: Alignment.topRight,
+      alignment: alignment,
       child: GestureDetector(
         onTap: () {
-          onChanged?.call(!checked);
+          onClick?.call();
         },
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: padding,
           child: Container(
-            width: 20,
-            height: 20,
+            width: size,
+            height: size,
             decoration: decoration,
             child: Center(
               child: Text(
