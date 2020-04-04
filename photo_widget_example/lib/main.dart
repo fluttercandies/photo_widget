@@ -46,9 +46,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<AssetPathEntity> galleryList = [];
-  AssetPathEntity currentPick;
-
   final provider = PickerDataProvider();
 
   @override
@@ -63,8 +60,11 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: _refreshGalleryList,
             child: Text('refresh gallery list'),
           ),
-          if (galleryList.isNotEmpty) _buildDropdownButton(),
-          if (currentPick != null) Expanded(child: _buildPath()),
+          _buildDropdownButton(),
+          AnimatedBuilder(
+            animation: provider,
+            builder: (_, __) => Expanded(child: _buildPath()),
+          ),
         ],
       ),
     );
@@ -72,32 +72,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _refreshGalleryList() async {
     final pathList = await PhotoManager.getAssetPathList();
-    galleryList.clear();
-    galleryList.addAll(pathList);
+    provider.resetPathList(pathList);
     setState(() {});
   }
 
   Widget _buildDropdownButton() {
-    return DropdownButton<AssetPathEntity>(
-      items: [for (final path in galleryList) _buildPathItem(path)],
-      onChanged: (value) {
-        currentPick = value;
-        setState(() {});
-      },
-      value: currentPick,
-    );
-  }
-
-  DropdownMenuItem<AssetPathEntity> _buildPathItem(AssetPathEntity path) {
-    return DropdownMenuItem<AssetPathEntity>(
-      child: Text(path.name),
-      value: path,
+    return DropDownGalleryPicker(
+      provider: provider,
     );
   }
 
   Widget _buildPath() {
+    if (provider.current == null) {
+      return Container();
+    }
     return AssetPathWidget(
-      path: currentPick,
+      path: provider.current,
       buildItem: (context, asset, size) {
         return PickAssetWidget(asset: asset, provider: provider);
       },

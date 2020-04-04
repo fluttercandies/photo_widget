@@ -7,3 +7,4 @@ export 'src/widget/progress_widget.dart';
 export 'src/widget/scrolling_placeholder.dart';
 export 'src/widget/pick_color_mask.dart';
 export 'src/widget/pick_checkbox.dart';
+export 'src/widget/dropdown_gallery_picker.dart';

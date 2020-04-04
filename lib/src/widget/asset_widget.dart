@@ -43,6 +43,31 @@ class AssetWidget extends StatelessWidget {
   }
 }
 
+class AssetBigPreviewWidget extends StatelessWidget {
+  final AssetEntity asset;
+
+  const AssetBigPreviewWidget({
+    Key key,
+    @required this.asset,
+  }) : super(key: key);
+
+  static AssetWidget buildWidget(
+      BuildContext context, AssetEntity asset, int thumbSize) {
+    return AssetWidget(
+      asset: asset,
+      thumbSize: thumbSize,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Image(
+      image: AssetEntityFileImage(asset),
+      fit: BoxFit.cover,
+    );
+  }
+}
+
 class PickAssetWidget extends StatelessWidget {
   final AssetEntity asset;
   final int thumbSize;
