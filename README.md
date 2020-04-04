@@ -1,6 +1,8 @@
 # photo_widget
 
-For photo_manager extension
+Flutter widgets.
+
+Base on photo_manager, wraps up some UI components to quickly display the photo_manager as a usable widget, inserting it wherever you need it.
 
 ## Feature
 
