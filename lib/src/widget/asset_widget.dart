@@ -2,7 +2,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-
 typedef Widget AssetWidgetBuilder(
   BuildContext context,
   AssetEntity path, {
