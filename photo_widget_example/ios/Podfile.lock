@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - photo_manager (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - photo_manager (from `.symlinks/plugins/photo_manager/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  photo_manager:
+    :path: ".symlinks/plugins/photo_manager/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  photo_manager: f7c619c2cc8c2adb8d85c63363babac477de9c67
+
+PODFILE CHECKSUM: 49ec7d4076524b7e225c38b98147173651ac4b9d
+
+COCOAPODS: 1.9.1

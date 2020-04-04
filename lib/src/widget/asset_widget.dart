@@ -2,13 +2,17 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../photo_provider.dart';
+import 'pick_checkbox.dart';
+import 'pick_color_mask.dart';
+
 typedef Widget AssetWidgetBuilder(
   BuildContext context,
-  AssetEntity path, {
+  AssetEntity path,
   int thumbSize,
-});
+);
 
-class AssetWidget extends StatefulWidget {
+class AssetWidget extends StatelessWidget {
   final AssetEntity asset;
   final int thumbSize;
 
@@ -18,27 +22,87 @@ class AssetWidget extends StatefulWidget {
     this.thumbSize = 100,
   }) : super(key: key);
 
-  @override
-  _AssetWidgetState createState() => _AssetWidgetState();
-
-  static AssetWidget buildWidget(BuildContext context, AssetEntity asset,
-      {int thumbSize = 100}) {
+  static AssetWidget buildWidget(
+      BuildContext context, AssetEntity asset, int thumbSize) {
     return AssetWidget(
       asset: asset,
+      thumbSize: thumbSize,
     );
   }
-}
 
-class _AssetWidgetState extends State<AssetWidget> {
   @override
   Widget build(BuildContext context) {
     return Image(
       image: AssetEntityThumbImage(
-        entity: widget.asset,
-        width: widget.thumbSize,
-        height: widget.thumbSize,
+        entity: asset,
+        width: thumbSize,
+        height: thumbSize,
       ),
       fit: BoxFit.cover,
+    );
+  }
+}
+
+class PickAssetWidget extends StatelessWidget {
+  final AssetEntity asset;
+  final int thumbSize;
+  final PickerDataProvider provider;
+  final Function onTap;
+  final PickColorMaskBuilder pickColorMaskBuilder;
+  final PickedCheckboxBuilder pickedCheckboxBuilder;
+
+  const PickAssetWidget({
+    Key key,
+    @required this.asset,
+    @required this.provider,
+    this.thumbSize = 100,
+    this.onTap,
+    this.pickColorMaskBuilder,
+    this.pickedCheckboxBuilder,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final pickMask = AnimatedBuilder(
+      animation: provider,
+      builder: (_, __) {
+        final pickIndex = provider.pickIndex(asset);
+        final picked = pickIndex >= 0;
+        return pickColorMaskBuilder?.call(context, picked) ??
+            PickColorMask(
+              picked: picked,
+            );
+      },
+    );
+
+    final checkWidget = AnimatedBuilder(
+      animation: provider,
+      builder: (_, __) {
+        final pickIndex = provider.pickIndex(asset);
+        return pickedCheckboxBuilder?.call(context, pickIndex) ??
+            PickedCheckbox(
+              onChanged: (value) {
+                provider.pickEntity(asset);
+              },
+              checkIndex: pickIndex,
+            );
+      },
+    );
+
+    return GestureDetector(
+      child: Stack(
+        children: <Widget>[
+          Positioned.fill(
+            child: AssetWidget(
+              asset: asset,
+              thumbSize: thumbSize,
+            ),
+          ),
+          pickMask,
+          checkWidget,
+        ],
+      ),
+      onTap: onTap,
     );
   }
 }

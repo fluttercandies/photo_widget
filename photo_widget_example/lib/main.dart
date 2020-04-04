@@ -48,6 +48,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<AssetPathEntity> galleryList = [];
   AssetPathEntity currentPick;
+
+  final provider = PickerDataProvider();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,6 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildPath() {
     return AssetPathWidget(
       path: currentPick,
+      buildItem: (context, asset, size) {
+        return PickAssetWidget(asset: asset, provider: provider);
+      },
     );
   }
 }

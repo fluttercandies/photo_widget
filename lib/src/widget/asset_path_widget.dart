@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_widget/src/collection/observer_map.dart';
 import 'asset_widget.dart';
 import 'scrolling_placeholder.dart';
 
@@ -29,7 +30,12 @@ class AssetPathWidget extends StatefulWidget {
 }
 
 class _AssetPathWidgetState extends State<AssetPathWidget> {
-  Map<int, AssetEntity> entityMap = {};
+  static Map<int, AssetEntity> _createMap() {
+    return {};
+    // return ObserverMap();
+  }
+
+  final cacheMap = _createMap();
 
   final scrolling = ValueNotifier(false);
 
@@ -51,17 +57,18 @@ class _AssetPathWidgetState extends State<AssetPathWidget> {
 
   Widget _buildItem(BuildContext context, int index) {
     return _WrapItem(
+      cacheMap: cacheMap,
       path: widget.path,
       index: index,
       onLoaded: (AssetEntity entity) {
-        entityMap[index] = entity;
+        cacheMap[index] = entity;
       },
       buildItem: widget.buildItem,
-      loaded: entityMap.containsKey(index),
+      loaded: cacheMap.containsKey(index),
       thumbSize: widget.thumbSize,
       valueNotifier: scrolling,
       scrollingPlaceHolder: widget.scrollingWidget,
-      entity: entityMap[index],
+      entity: cacheMap[index],
     );
   }
 
@@ -78,7 +85,7 @@ class _AssetPathWidgetState extends State<AssetPathWidget> {
   void didUpdateWidget(AssetPathWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.path.id != widget.path.id) {
-      entityMap.clear();
+      cacheMap.clear();
       scrolling.value = false;
       if (mounted) {
         setState(() {});
@@ -97,7 +104,7 @@ class _WrapItem extends StatefulWidget {
   final int thumbSize;
   final Widget scrollingPlaceHolder;
   final AssetEntity entity;
-
+  final Map<int, AssetEntity> cacheMap;
   const _WrapItem({
     Key key,
     @required this.path,
@@ -109,6 +116,7 @@ class _WrapItem extends StatefulWidget {
     @required this.thumbSize,
     @required this.scrollingPlaceHolder,
     @required this.entity,
+    this.cacheMap,
   }) : super(key: key);
 
   @override
@@ -126,7 +134,7 @@ class __WrapItemState extends State<_WrapItem> {
   @override
   void initState() {
     super.initState();
-    assetEntity = widget.entity;
+    assetEntity = widget.cacheMap[widget.index];
     widget.valueNotifier.addListener(onChange);
     if (!scrolling) {
       _load();
@@ -157,7 +165,7 @@ class __WrapItemState extends State<_WrapItem> {
     if (assetEntity == null) {
       return widget.scrollingPlaceHolder;
     }
-    return widget.buildItem(context, assetEntity, thumbSize: widget.thumbSize);
+    return widget.buildItem(context, assetEntity, widget.thumbSize);
   }
 
   Future<void> _load() async {
