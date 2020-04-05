@@ -11,9 +11,11 @@ mixin PhotoDataProvider on ChangeNotifier {
   set current(AssetPathEntity current) {
     if (_current != current) {
       _current = current;
-      notifyListeners();
+      currentPathNotifier.value = current;
     }
   }
+
+  final currentPathNotifier = ValueNotifier<AssetPathEntity>(null);
 
   Map<String, PickerPathCache> _cacheMap = {};
 
