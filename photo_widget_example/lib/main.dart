@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           _buildDropdownButton(),
           AnimatedBuilder(
-            animation: provider,
+            animation: provider.currentPathNotifier,
             builder: (_, __) => Expanded(child: _buildPath()),
           ),
         ],
@@ -89,7 +89,12 @@ class _MyHomePageState extends State<MyHomePage> {
     return AssetPathWidget(
       path: provider.current,
       buildItem: (context, asset, size) {
-        return PickAssetWidget(asset: asset, provider: provider);
+        return PickAssetWidget(
+          asset: asset,
+          provider: provider,
+          thumbSize: size,
+        );
+        // return AssetWidget(asset: asset);
       },
     );
   }
