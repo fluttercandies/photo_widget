@@ -197,4 +197,20 @@ class AssetEntityThumbImage extends ImageProvider<AssetEntityThumbImage> {
       ImageConfiguration configuration) async {
     return this;
   }
+
+  bool operator ==(other) {
+    if (identical(other, this)) {
+      return true;
+    }
+    if (other is! AssetEntityThumbImage) {
+      return false;
+    }
+    final AssetEntityThumbImage o = other;
+    return (o.entity == entity &&
+        o.width == entity.width &&
+        o.height == entity.height);
+  }
+
+  @override
+  int get hashCode => entity.hashCode * 2 + width * 2 + height * 2;
 }

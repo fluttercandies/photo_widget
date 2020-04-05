@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_widget/src/widget/asset_widget.dart';
 
 import '../photo_provider.dart';
@@ -26,13 +27,16 @@ class DropDownGalleryPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: provider,
-      builder: (_, __) => DropDownWrapper(
+      animation: provider.currentPathNotifier,
+      builder: (_, __) => DropDown<AssetPathEntity>(
         child: buildButton(),
         dropdownWidgetBuilder: (BuildContext context) =>
-            ChangeCurrentPathDropdown(
+            ChangeCurrentPathWidget(
           provider: provider,
         ),
+        onResult: (AssetPathEntity value) {
+          provider.currentPath = value;
+        },
       ),
     );
   }
@@ -76,36 +80,39 @@ class DropDownGalleryPicker extends StatelessWidget {
   }
 }
 
-class DropDownWrapper extends StatefulWidget {
+class DropDown<T> extends StatefulWidget {
   final Widget child;
   final WidgetBuilder dropdownWidgetBuilder;
+  final ValueChanged<T> onResult;
 
-  const DropDownWrapper({
+  const DropDown({
     Key key,
     @required this.child,
     @required this.dropdownWidgetBuilder,
+    this.onResult,
   }) : super(key: key);
   @override
-  _DropDownWrapperState createState() => _DropDownWrapperState();
+  _DropDownState<T> createState() => _DropDownState<T>();
 }
 
-class _DropDownWrapperState extends State<DropDownWrapper> {
+class _DropDownState<T> extends State<DropDown<T>> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       child: widget.child,
-      onTap: () {
+      onTap: () async {
         final height = MediaQuery.of(context).size.height;
         RenderBox box = context.findRenderObject();
         final offsetStart = box.localToGlobal(Offset.zero);
         final dialogHeight = height - (offsetStart.dy + box.paintBounds.bottom);
-        _showDropDown(
+        final result = await _showDropDown<T>(
           context: context,
           height: dialogHeight,
           builder: (_) {
             return widget.dropdownWidgetBuilder?.call(context);
           },
         );
+        widget.onResult(result);
       },
     );
   }
@@ -159,58 +166,108 @@ class DismissNotification<T> extends Notification {
   DismissNotification(this.result);
 }
 
-class ChangeCurrentPathDropdown extends StatefulWidget {
+class ChangeCurrentPathWidget extends StatefulWidget {
   final PickerDataProvider provider;
 
-  const ChangeCurrentPathDropdown({
+  const ChangeCurrentPathWidget({
     Key key,
     @required this.provider,
   }) : super(key: key);
 
   @override
-  _ChangeCurrentPathDropdownState createState() =>
-      _ChangeCurrentPathDropdownState();
+  _ChangeCurrentPathWidgetState createState() =>
+      _ChangeCurrentPathWidgetState();
 }
 
-class _ChangeCurrentPathDropdownState extends State<ChangeCurrentPathDropdown> {
+class _ChangeCurrentPathWidgetState extends State<ChangeCurrentPathWidget> {
   PickerDataProvider get provider => widget.provider;
+
+  static const itemHeight = 65.0;
+  ScrollController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    final index = provider.pathList.indexOf(provider.currentPath);
+    controller = ScrollController(initialScrollOffset: itemHeight * index);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: provider.pathList.length,
-        itemBuilder: _buildItem,
+      backgroundColor: const Color(0xFF333333),
+      body: MediaQuery.removePadding(
+        removeTop: true,
+        context: context,
+        child: ListView.builder(
+          controller: controller,
+          itemCount: provider.pathList.length,
+          itemBuilder: _buildItem,
+        ),
       ),
     );
   }
 
   Widget _buildItem(BuildContext context, int index) {
     final item = provider.pathList[index];
-    return Container(
-      height: 80,
+    const height = 65.0;
+    final w = Container(
+      height: height,
       child: Row(
         children: <Widget>[
-          FutureBuilder(
-            future: item.getAssetListRange(start: 0, end: 1),
-            builder: (c, data) {
-              if (!data.hasData) {
-                return Container();
-              }
-              return AspectRatio(
-                aspectRatio: 1,
-                child: Image(
+          AspectRatio(
+            aspectRatio: 1,
+            child: FutureBuilder(
+              future: item.getAssetListRange(start: 0, end: 1),
+              builder: (c, data) {
+                if (!data.hasData) {
+                  return Container();
+                }
+                return Image(
                   image: AssetEntityThumbImage(
                     entity: data.data[0],
-                    width: 80,
-                    height: 80,
+                    width: 120,
+                    height: 120,
                   ),
                   fit: BoxFit.cover,
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-          Text(item.name),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              item.name,
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+          Text(
+            "(${item.assetCount})",
+            style: TextStyle(color: const Color(0xFF717171), fontSize: 16),
+          ),
+          Expanded(child: Container()),
+          _buildCheckFlagWidget(item),
         ],
+      ),
+    );
+    return GestureDetector(
+      child: w,
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        DismissNotification(item).dispatch(context);
+      },
+    );
+  }
+
+  Widget _buildCheckFlagWidget(AssetPathEntity item) {
+    if (widget.provider.currentPath != item) {
+      return Container();
+    }
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Icon(
+        Icons.check,
+        color: Colors.white,
       ),
     );
   }
