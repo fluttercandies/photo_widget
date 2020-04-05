@@ -6,9 +6,9 @@ mixin PhotoDataProvider on ChangeNotifier {
 
   AssetPathEntity _current;
 
-  AssetPathEntity get current => _current;
+  AssetPathEntity get currentPath => _current;
 
-  set current(AssetPathEntity current) {
+  set currentPath(AssetPathEntity current) {
     if (_current != current) {
       _current = current;
       currentPathNotifier.value = current;
@@ -23,7 +23,7 @@ mixin PhotoDataProvider on ChangeNotifier {
     this.pathList.clear();
     this.pathList.addAll(list);
     _cacheMap.clear();
-    current = list[defaultIndex];
+    currentPath = list[defaultIndex];
     notifyListeners();
   }
 

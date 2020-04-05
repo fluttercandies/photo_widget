@@ -83,11 +83,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildPath() {
-    if (provider.current == null) {
+    if (provider.currentPath == null) {
       return Container();
     }
     return AssetPathWidget(
-      path: provider.current,
+      path: provider.currentPath,
       buildItem: (context, asset, size) {
         return PickAssetWidget(
           asset: asset,
