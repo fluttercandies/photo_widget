@@ -221,7 +221,7 @@ class _ChangePathWidgetState extends State<ChangePathWidget> {
     );
     return GestureDetector(
       child: w,
-      behavior: HitTestBehavior.opaque,
+      behavior: HitTestBehavior.translucent,
       onTap: () {
         widget?.close?.call(item);
       },
