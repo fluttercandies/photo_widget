@@ -1,10 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_widget/src/widget/asset_widget.dart';
 
 import '../photo_provider.dart';
+import 'dropdown.dart';
 
 class SelectedPathDropdownButton extends StatelessWidget {
   final PhotoDataProvider provider;
@@ -13,7 +12,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
   final TextStyle textStyle;
   final EdgeInsetsGeometry padding;
   final WidgetBuilder buttonBuilder;
-  final WidgetBuilder dropdownBuilder;
+  final DropdownWidgetBuilder<AssetPathEntity> dropdownBuilder;
   final ValueChanged<AssetPathEntity> onChanged;
 
   const SelectedPathDropdownButton({
@@ -32,14 +31,17 @@ class SelectedPathDropdownButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final arrowDownNotifier = ValueNotifier(false);
     return AnimatedBuilder(
       animation: provider.currentPathNotifier,
       builder: (_, __) => DropDown<AssetPathEntity>(
-        child: buttonBuilder ?? buildButton(context),
+        child: (buttonBuilder ??
+            (context) => buildButton(context, arrowDownNotifier))(context),
         dropdownWidgetBuilder: dropdownBuilder ??
-            (BuildContext context) {
+            (BuildContext context, close) {
               return ChangePathWidget(
                 provider: provider,
+                close: close,
               );
             },
         onResult: (AssetPathEntity value) {
@@ -49,11 +51,17 @@ class SelectedPathDropdownButton extends StatelessWidget {
             onChanged(value);
           }
         },
+        onShow: (value) {
+          arrowDownNotifier.value = value;
+        },
       ),
     );
   }
 
-  Widget buildButton(BuildContext context) {
+  Widget buildButton(
+    BuildContext context,
+    ValueNotifier<bool> arrowDownNotifier,
+  ) {
     if (provider.pathList.isEmpty || provider.currentPath == null) {
       return Container();
     }
@@ -84,9 +92,20 @@ class SelectedPathDropdownButton extends StatelessWidget {
             CircleAvatar(
               radius: 12,
               backgroundColor: const Color(0xFFB2B2B2),
-              child: Icon(
-                Icons.arrow_drop_down,
-                color: const Color(0xFF232323),
+              child: AnimatedBuilder(
+                child: Icon(
+                  Icons.arrow_drop_down,
+                  color: const Color(0xFF232323),
+                ),
+                animation: arrowDownNotifier,
+                builder: (BuildContext context, Widget child) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    // transform: Matrix4.translationValues(1, 1, 0)
+                    //   ..rotateZ(pi * sqrt),
+                    child: child,
+                  );
+                },
               ),
             ),
           ],
@@ -96,99 +115,16 @@ class SelectedPathDropdownButton extends StatelessWidget {
   }
 }
 
-class DropDown<T> extends StatefulWidget {
-  final Widget child;
-  final WidgetBuilder dropdownWidgetBuilder;
-  final ValueChanged<T> onResult;
-
-  const DropDown({
-    Key key,
-    @required this.child,
-    @required this.dropdownWidgetBuilder,
-    this.onResult,
-  }) : super(key: key);
-  @override
-  _DropDownState<T> createState() => _DropDownState<T>();
-}
-
-class _DropDownState<T> extends State<DropDown<T>> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      child: widget.child,
-      onTap: () async {
-        final height = MediaQuery.of(context).size.height;
-        RenderBox box = context.findRenderObject();
-        final offsetStart = box.localToGlobal(Offset.zero);
-        final dialogHeight = height - (offsetStart.dy + box.paintBounds.bottom);
-        final result = await _showDropDown<T>(
-          context: context,
-          height: dialogHeight,
-          builder: (_) {
-            return widget.dropdownWidgetBuilder?.call(context);
-          },
-        );
-        widget.onResult(result);
-      },
-    );
-  }
-}
-
-Future<T> _showDropDown<T>({
-  @required BuildContext context,
-  WidgetBuilder builder,
-  double height,
-}) {
-  final completer = Completer<T>();
-  var isReply = false;
-  OverlayEntry entry;
-  entry = OverlayEntry(builder: (context) {
-    return NotificationListener<DismissNotification<T>>(
-      onNotification: (notification) {
-        if (isReply) {
-          return false;
-        }
-        isReply = true;
-
-        completer.complete(notification.result);
-        entry.remove();
-        return true;
-      },
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Builder(
-          builder: (ctx) => GestureDetector(
-            onTap: () {
-              DismissNotification(null).dispatch(ctx);
-            },
-            child: Container(
-              height: height,
-              width: double.infinity,
-              child: builder(ctx),
-            ),
-          ),
-        ),
-      ),
-    );
-  });
-  Overlay.of(context).insert(entry);
-  return completer.future;
-}
-
-class DismissNotification<T> extends Notification {
-  final T result;
-
-  DismissNotification(this.result);
-}
-
 class ChangePathWidget extends StatefulWidget {
   final PickerDataProvider provider;
   final IndexedWidgetBuilder itemBuilder;
   final double itemHeight;
+  final ValueSetter<AssetPathEntity> close;
 
   const ChangePathWidget({
     Key key,
     @required this.provider,
+    @required this.close,
     this.itemBuilder,
     this.itemHeight = 65,
   }) : super(key: key);
@@ -228,7 +164,7 @@ class _ChangePathWidgetState extends State<ChangePathWidget> {
 
   Widget _buildItem(BuildContext context, int index) {
     final item = provider.pathList[index];
-    final w = Container(
+    Widget w = Container(
       height: widget.itemHeight,
       child: Row(
         children: <Widget>[
@@ -267,11 +203,27 @@ class _ChangePathWidgetState extends State<ChangePathWidget> {
         ],
       ),
     );
+    w = Stack(
+      children: <Widget>[
+        w,
+        Positioned(
+          height: 1,
+          bottom: 0,
+          right: 0,
+          left: widget.itemHeight + 10,
+          child: IgnorePointer(
+            child: Container(
+              color: const Color(0xFF484848),
+            ),
+          ),
+        ),
+      ],
+    );
     return GestureDetector(
       child: w,
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        DismissNotification(item).dispatch(context);
+        widget?.close?.call(item);
       },
     );
   }

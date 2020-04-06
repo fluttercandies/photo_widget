@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-
 mixin PhotoDataProvider on ChangeNotifier {
   AssetPathEntity _current;
 
