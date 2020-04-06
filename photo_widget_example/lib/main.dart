@@ -65,8 +65,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildDropdownButton() {
-    return SelectedPathDropdownButton(
-      provider: provider,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        SelectedPathDropdownButton(
+          provider: provider,
+        ),
+        PickSureButton(
+          provider: provider,
+        ),
+      ],
     );
   }
 

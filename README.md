@@ -6,9 +6,16 @@ Base on photo_manager, wraps up some UI components to quickly display the photo_
 
 ## Feature
 
-Unlike photo, this library extracts various widget units so that any widget can be extracted and put into its own project. It can also be used to quickly create your own style of image/video selector.
+Unlike photo, this library extracts various widget units so that any widget can be extracted and put into its own project. It can also be used to quickly create your own style of image/video picker.
 
-It has not been submitted to pub, before submission, there is no guarantee that the api will not change
+Currently in the development stage, the API may change at any time.
+
+## Import
+
+```dart
+import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_widget/photo_widget.dart';
+```
 
 ## Widgets
 

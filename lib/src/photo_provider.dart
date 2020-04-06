@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+
 mixin PhotoDataProvider on ChangeNotifier {
   AssetPathEntity _current;
 
@@ -46,14 +47,20 @@ mixin PhotoDataProvider on ChangeNotifier {
 }
 
 class PickerDataProvider extends ChangeNotifier with PhotoDataProvider {
-  PickerDataProvider({List<AssetPathEntity> pathList}) {
+  PickerDataProvider({List<AssetPathEntity> pathList, int max = 9}) {
     if (pathList != null && pathList.isNotEmpty) {
       this.pathList.addAll(pathList);
     }
+    pickedNotifier.value = picked;
+    this.max.value = max;
   }
+
+  final max = ValueNotifier(0);
 
   List<AssetEntity> picked = [];
   bool isOrigin = false;
+
+  final pickedNotifier = ValueNotifier<List<AssetEntity>>([]);
 
   void pickEntity(AssetEntity entity) {
     print(picked.contains(entity));
@@ -62,6 +69,8 @@ class PickerDataProvider extends ChangeNotifier with PhotoDataProvider {
     } else {
       picked.add(entity);
     }
+    pickedNotifier.value = picked;
+    pickedNotifier.notifyListeners();
     notifyListeners();
   }
 

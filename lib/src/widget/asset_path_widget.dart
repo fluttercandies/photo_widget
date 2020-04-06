@@ -14,6 +14,9 @@ class AssetPathWidget extends StatefulWidget {
   final int rowCount;
   final int thumbSize;
   final Widget scrollingWidget;
+  final double itemRatio;
+  final double dividerWidth;
+  final Color dividerColor;
 
   const AssetPathWidget({
     Key key,
@@ -22,6 +25,9 @@ class AssetPathWidget extends StatefulWidget {
     this.rowCount = 4,
     this.thumbSize = 100,
     this.scrollingWidget = const ScrollingPlaceholder(),
+    this.itemRatio = 1,
+    this.dividerWidth = 1,
+    this.dividerColor = const Color(0xFF313434),
   }) : super(key: key);
 
   @override
@@ -31,7 +37,6 @@ class AssetPathWidget extends StatefulWidget {
 class _AssetPathWidgetState extends State<AssetPathWidget> {
   static Map<int, AssetEntity> _createMap() {
     return {};
-    // return ObserverMap();
   }
 
   final cacheMap = _createMap();
@@ -42,14 +47,19 @@ class _AssetPathWidgetState extends State<AssetPathWidget> {
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
       onNotification: _onScroll,
-      child: GridView.builder(
-        key: ValueKey(widget.path),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: widget.rowCount,
+      child: Container(
+        color: widget.dividerColor,
+        child: GridView.builder(
+          key: ValueKey(widget.path),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: widget.rowCount,
+            crossAxisSpacing: widget.dividerWidth,
+            mainAxisSpacing: widget.dividerWidth,
+          ),
+          itemBuilder: (context, index) => _buildItem(context, index),
+          itemCount: widget.path.assetCount,
+          addRepaintBoundaries: true,
         ),
-        itemBuilder: (context, index) => _buildItem(context, index),
-        itemCount: widget.path.assetCount,
-        addRepaintBoundaries: true,
       ),
     );
   }
