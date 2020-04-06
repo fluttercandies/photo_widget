@@ -15,42 +15,63 @@ class FeatureController<T> {
   Future<T> get closed => completer.future;
 }
 
-FeatureController<T> showDropDown<T>({
+FeatureController<T> _showDropDown<T>({
   @required BuildContext context,
   DropdownWidgetBuilder<T> builder,
   double height,
+  Duration animationDuration = const Duration(milliseconds: 250),
+  @required TickerProvider tickerProvider,
 }) {
+  final animationController = AnimationController(
+    vsync: tickerProvider,
+    duration: animationDuration,
+  );
   final completer = Completer<T>();
   var isReply = false;
   OverlayEntry entry;
-  void close(T value) {
+  void close(T value) async {
     if (isReply) {
       return;
     }
     isReply = true;
-
-    completer.complete(value);
-    entry?.remove();
+    animationController.animateTo(0).whenCompleteOrCancel(() async {
+      await Future.delayed(Duration(milliseconds: 16));
+      completer.complete(value);
+      entry?.remove();
+    });
   }
 
+  final screenHeight = MediaQuery.of(context).size.height;
+  final space = screenHeight - height;
+
   entry = OverlayEntry(builder: (context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Builder(
-        builder: (ctx) => GestureDetector(
-          onTap: () {
-            close(null);
-          },
-          child: Container(
-            height: height,
-            width: double.infinity,
-            child: builder(ctx, close),
+    return Padding(
+      padding: EdgeInsets.only(top: space),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Builder(
+          builder: (ctx) => GestureDetector(
+            onTap: () {
+              close(null);
+            },
+            child: AnimatedBuilder(
+              child: builder(ctx, close),
+              animation: animationController,
+              builder: (BuildContext context, Widget child) {
+                print(height * animationController.value);
+                return Container(
+                  height: height * animationController.value,
+                  child: child,
+                );
+              },
+            ),
           ),
         ),
       ),
     );
   });
   Overlay.of(context).insert(entry);
+  animationController.animateTo(1);
   return FeatureController(
     completer,
     close,
@@ -74,25 +95,36 @@ class DropDown<T> extends StatefulWidget {
   _DropDownState<T> createState() => _DropDownState<T>();
 }
 
-class _DropDownState<T> extends State<DropDown<T>> {
+class _DropDownState<T> extends State<DropDown<T>>
+    with TickerProviderStateMixin {
+  FeatureController<T> controller;
+  var isShow = false;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       child: widget.child,
       onTap: () async {
+        if (controller != null) {
+          controller.close(null);
+          return;
+        }
         final height = MediaQuery.of(context).size.height;
         RenderBox box = context.findRenderObject();
         final offsetStart = box.localToGlobal(Offset.zero);
         final dialogHeight = height - (offsetStart.dy + box.paintBounds.bottom);
         widget.onShow?.call(true);
-        final controller = showDropDown<T>(
+        controller = _showDropDown<T>(
           context: context,
           height: dialogHeight,
           builder: (_, close) {
             return widget.dropdownWidgetBuilder?.call(context, close);
           },
+          tickerProvider: this,
         );
+        isShow = true;
         final result = await controller.closed;
+        controller = null;
+        isShow = false;
         widget.onResult(result);
         widget.onShow?.call(false);
       },

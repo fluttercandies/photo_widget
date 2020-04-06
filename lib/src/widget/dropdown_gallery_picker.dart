@@ -46,7 +46,9 @@ class SelectedPathDropdownButton extends StatelessWidget {
             },
         onResult: (AssetPathEntity value) {
           if (onChanged == null) {
-            provider.currentPath = value;
+            if (value != null) {
+              provider.currentPath = value;
+            }
           } else {
             onChanged(value);
           }
