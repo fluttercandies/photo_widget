@@ -8,6 +8,8 @@ import 'scrolling_placeholder.dart';
 typedef Widget AssetPathWidgetBuilder(
     BuildContext context, AssetPathEntity path);
 
+typedef void OnAssetItemClick(BuildContext context, AssetEntity entity);
+
 class AssetPathWidget extends StatefulWidget {
   final AssetPathEntity path;
   final AssetWidgetBuilder buildItem;
@@ -17,6 +19,7 @@ class AssetPathWidget extends StatefulWidget {
   final double itemRatio;
   final double dividerWidth;
   final Color dividerColor;
+  final OnAssetItemClick onAssetItemClick;
 
   const AssetPathWidget({
     Key key,
@@ -28,6 +31,7 @@ class AssetPathWidget extends StatefulWidget {
     this.itemRatio = 1,
     this.dividerWidth = 1,
     this.dividerColor = const Color(0xFF313434),
+    this.onAssetItemClick,
   }) : super(key: key);
 
   @override
@@ -57,7 +61,7 @@ class _AssetPathWidgetState extends State<AssetPathWidget> {
             mainAxisSpacing: widget.dividerWidth,
           ),
           itemBuilder: (context, index) => _buildItem(context, index),
-          itemCount: widget.path.assetCount,
+          itemCount: widget.path?.assetCount ?? 0,
           addRepaintBoundaries: true,
         ),
       ),
@@ -65,19 +69,30 @@ class _AssetPathWidgetState extends State<AssetPathWidget> {
   }
 
   Widget _buildItem(BuildContext context, int index) {
-    return _WrapItem(
-      cacheMap: cacheMap,
-      path: widget.path,
-      index: index,
-      onLoaded: (AssetEntity entity) {
-        cacheMap[index] = entity;
+    return GestureDetector(
+      onTap: () async {
+        var asset = cacheMap[index];
+        if (asset == null) {
+          asset = (await widget.path
+              .getAssetListRange(start: index, end: index + 1))[0];
+          cacheMap[index] = asset;
+        }
+        widget.onAssetItemClick?.call(context, asset);
       },
-      buildItem: widget.buildItem,
-      loaded: cacheMap.containsKey(index),
-      thumbSize: widget.thumbSize,
-      valueNotifier: scrolling,
-      scrollingPlaceHolder: widget.scrollingWidget,
-      entity: cacheMap[index],
+      child: _WrapItem(
+        cacheMap: cacheMap,
+        path: widget.path,
+        index: index,
+        onLoaded: (AssetEntity entity) {
+          cacheMap[index] = entity;
+        },
+        buildItem: widget.buildItem,
+        loaded: cacheMap.containsKey(index),
+        thumbSize: widget.thumbSize,
+        valueNotifier: scrolling,
+        scrollingPlaceHolder: widget.scrollingWidget,
+        entity: cacheMap[index],
+      ),
     );
   }
 
@@ -93,7 +108,7 @@ class _AssetPathWidgetState extends State<AssetPathWidget> {
   @override
   void didUpdateWidget(AssetPathWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.path.id != widget.path.id) {
+    if (oldWidget.path != widget.path) {
       cacheMap.clear();
       scrolling.value = false;
       if (mounted) {

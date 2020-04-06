@@ -10,3 +10,4 @@ export 'src/widget/pick_checkbox.dart';
 export 'src/widget/dropdown_gallery_picker.dart';
 export 'src/widget/dropdown.dart';
 export 'src/widget/pick_sure_button.dart';
+export 'src/widget/pick_home_page.dart';

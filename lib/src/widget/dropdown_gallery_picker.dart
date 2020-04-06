@@ -17,7 +17,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
 
   const SelectedPathDropdownButton({
     Key key,
-    this.provider,
+    @required this.provider,
     this.backgroundColor = const Color(0xFF4C4C4C),
     this.buttonBuilder,
     this.dropdownBuilder,

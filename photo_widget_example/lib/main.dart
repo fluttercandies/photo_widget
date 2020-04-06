@@ -26,11 +26,18 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+const debugPage = true;
+
 class _MyHomePageState extends State<MyHomePage> {
   final provider = PickerDataProvider();
 
   @override
   Widget build(BuildContext context) {
+    if (debugPage) {
+      return PhotoPickHomePage(
+        provider: provider,
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Simple example"),

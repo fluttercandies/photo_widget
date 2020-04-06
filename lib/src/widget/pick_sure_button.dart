@@ -18,21 +18,23 @@ class PickSureButton extends StatelessWidget {
   final TextStyle textStyle;
   final TextStyle disableTextStyle;
   final String defaultText;
+  final EdgeInsetsGeometry padding;
 
   const PickSureButton({
     Key key,
-    this.provider,
+    @required this.provider,
     this.onTap,
     this.builder,
     this.radius = 3,
     this.defaultText = "发送",
     this.disableColor = const Color(0xFF434343),
     this.color = Colors.blue,
-    this.textStyle = const TextStyle(fontSize: 12, color: Colors.white),
+    this.textStyle = const TextStyle(fontSize: 14, color: Colors.white),
     this.disableTextStyle = const TextStyle(
-      fontSize: 12,
+      fontSize: 14,
       color: const Color(0xFF696969),
     ),
+    this.padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
   }) : super(key: key);
 
   List<AssetEntity> get picked => provider.picked;
@@ -49,7 +51,6 @@ class PickSureButton extends StatelessWidget {
             onTap: () => onTap?.call(picked),
           );
         }
-        final padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 4);
         if (picked.isEmpty) {
           return ClipRRect(
             borderRadius: BorderRadius.circular(radius),
@@ -68,7 +69,7 @@ class PickSureButton extends StatelessWidget {
             child: Material(
               color: color,
               child: InkWell(
-                onTap: () => onTap(picked),
+                onTap: () => onTap?.call(picked),
                 child: Container(
                   padding: padding,
                   child: Text(

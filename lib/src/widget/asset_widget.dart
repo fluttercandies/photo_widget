@@ -118,9 +118,12 @@ class PickAssetWidget extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           Positioned.fill(
-            child: AssetWidget(
-              asset: asset,
-              thumbSize: thumbSize,
+            child: Hero(
+              tag: asset,
+              child: AssetWidget(
+                asset: asset,
+                thumbSize: thumbSize,
+              ),
             ),
           ),
           pickMask,

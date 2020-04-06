@@ -20,12 +20,27 @@ mixin PhotoDataProvider on ChangeNotifier {
   final pathListNotifier = ValueNotifier<List<AssetPathEntity>>([]);
   List<AssetPathEntity> pathList = [];
 
-  void resetPathList(List<AssetPathEntity> list,
-      {int defaultIndex = 0,
-      int sortBy(
-        AssetPathEntity a,
-        AssetPathEntity b,
-      )}) {
+  static int _defaultSort(
+    AssetPathEntity a,
+    AssetPathEntity b,
+  ) {
+    if (a.isAll) {
+      return -1;
+    }
+    if (b.isAll) {
+      return 1;
+    }
+    return 0;
+  }
+
+  void resetPathList(
+    List<AssetPathEntity> list, {
+    int defaultIndex = 0,
+    int sortBy(
+      AssetPathEntity a,
+      AssetPathEntity b,
+    ) = _defaultSort,
+  }) {
     if (sortBy != null) {
       list.sort(sortBy);
     }

@@ -12,7 +12,7 @@ class PickedCheckbox extends StatelessWidget {
   final Color unpickColor;
   final Color textColor;
   final double fontSize;
-  final EdgeInsets padding;
+  final EdgeInsetsGeometry padding;
   final double size;
 
   const PickedCheckbox({
@@ -49,6 +49,7 @@ class PickedCheckbox extends StatelessWidget {
     return Align(
       alignment: alignment,
       child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onTap: () {
           onClick?.call();
         },
