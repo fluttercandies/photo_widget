@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 mixin PhotoDataProvider on ChangeNotifier {
-  List<AssetPathEntity> pathList = [];
-
   AssetPathEntity _current;
 
   AssetPathEntity get currentPath => _current;
@@ -19,11 +17,23 @@ mixin PhotoDataProvider on ChangeNotifier {
 
   Map<String, PickerPathCache> _cacheMap = {};
 
-  void resetPathList(List<AssetPathEntity> list, [int defaultIndex = 0]) {
+  final pathListNotifier = ValueNotifier<List<AssetPathEntity>>([]);
+  List<AssetPathEntity> pathList = [];
+
+  void resetPathList(List<AssetPathEntity> list,
+      {int defaultIndex = 0,
+      int sortBy(
+        AssetPathEntity a,
+        AssetPathEntity b,
+      )}) {
+    if (sortBy != null) {
+      list.sort(sortBy);
+    }
     this.pathList.clear();
     this.pathList.addAll(list);
     _cacheMap.clear();
     currentPath = list[defaultIndex];
+    pathListNotifier.value = this.pathList;
     notifyListeners();
   }
 

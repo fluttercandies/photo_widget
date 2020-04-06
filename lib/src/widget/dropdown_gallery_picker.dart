@@ -6,22 +6,28 @@ import 'package:photo_widget/src/widget/asset_widget.dart';
 
 import '../photo_provider.dart';
 
-class DropDownGalleryPicker extends StatelessWidget {
+class SelectedPathDropdownButton extends StatelessWidget {
   final PhotoDataProvider provider;
 
   final Color backgroundColor;
   final TextStyle textStyle;
   final EdgeInsetsGeometry padding;
+  final WidgetBuilder buttonBuilder;
+  final WidgetBuilder dropdownBuilder;
+  final ValueChanged<AssetPathEntity> onChanged;
 
-  const DropDownGalleryPicker({
+  const SelectedPathDropdownButton({
     Key key,
     this.provider,
     this.backgroundColor = const Color(0xFF4C4C4C),
+    this.buttonBuilder,
+    this.dropdownBuilder,
     this.textStyle = const TextStyle(
       color: Colors.white,
       fontSize: 14,
     ),
     this.padding = const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -29,19 +35,29 @@ class DropDownGalleryPicker extends StatelessWidget {
     return AnimatedBuilder(
       animation: provider.currentPathNotifier,
       builder: (_, __) => DropDown<AssetPathEntity>(
-        child: buildButton(),
-        dropdownWidgetBuilder: (BuildContext context) =>
-            ChangeCurrentPathWidget(
-          provider: provider,
-        ),
+        child: buttonBuilder ?? buildButton(context),
+        dropdownWidgetBuilder: dropdownBuilder ??
+            (BuildContext context) {
+              return ChangePathWidget(
+                provider: provider,
+              );
+            },
         onResult: (AssetPathEntity value) {
-          provider.currentPath = value;
+          if (onChanged == null) {
+            provider.currentPath = value;
+          } else {
+            onChanged(value);
+          }
         },
       ),
     );
   }
 
-  Widget buildButton() {
+  Widget buildButton(BuildContext context) {
+    if (provider.pathList.isEmpty || provider.currentPath == null) {
+      return Container();
+    }
+
     final decoration = BoxDecoration(
       color: backgroundColor,
       borderRadius: BorderRadius.circular(35),
@@ -122,7 +138,6 @@ Future<T> _showDropDown<T>({
   @required BuildContext context,
   WidgetBuilder builder,
   double height,
-  T testResult,
 }) {
   final completer = Completer<T>();
   var isReply = false;
@@ -144,7 +159,7 @@ Future<T> _showDropDown<T>({
         child: Builder(
           builder: (ctx) => GestureDetector(
             onTap: () {
-              DismissNotification(testResult).dispatch(null);
+              DismissNotification(null).dispatch(ctx);
             },
             child: Container(
               height: height,
@@ -166,30 +181,33 @@ class DismissNotification<T> extends Notification {
   DismissNotification(this.result);
 }
 
-class ChangeCurrentPathWidget extends StatefulWidget {
+class ChangePathWidget extends StatefulWidget {
   final PickerDataProvider provider;
+  final IndexedWidgetBuilder itemBuilder;
+  final double itemHeight;
 
-  const ChangeCurrentPathWidget({
+  const ChangePathWidget({
     Key key,
     @required this.provider,
+    this.itemBuilder,
+    this.itemHeight = 65,
   }) : super(key: key);
 
   @override
-  _ChangeCurrentPathWidgetState createState() =>
-      _ChangeCurrentPathWidgetState();
+  _ChangePathWidgetState createState() => _ChangePathWidgetState();
 }
 
-class _ChangeCurrentPathWidgetState extends State<ChangeCurrentPathWidget> {
+class _ChangePathWidgetState extends State<ChangePathWidget> {
   PickerDataProvider get provider => widget.provider;
 
-  static const itemHeight = 65.0;
   ScrollController controller;
 
   @override
   void initState() {
     super.initState();
     final index = provider.pathList.indexOf(provider.currentPath);
-    controller = ScrollController(initialScrollOffset: itemHeight * index);
+    controller =
+        ScrollController(initialScrollOffset: widget.itemHeight * index);
   }
 
   @override
@@ -202,7 +220,7 @@ class _ChangeCurrentPathWidgetState extends State<ChangeCurrentPathWidget> {
         child: ListView.builder(
           controller: controller,
           itemCount: provider.pathList.length,
-          itemBuilder: _buildItem,
+          itemBuilder: widget.itemBuilder ?? _buildItem,
         ),
       ),
     );
@@ -210,9 +228,8 @@ class _ChangeCurrentPathWidgetState extends State<ChangeCurrentPathWidget> {
 
   Widget _buildItem(BuildContext context, int index) {
     final item = provider.pathList[index];
-    const height = 65.0;
     final w = Container(
-      height: height,
+      height: widget.itemHeight,
       child: Row(
         children: <Widget>[
           AspectRatio(

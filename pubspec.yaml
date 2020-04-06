@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  photo_manager: 0.5.1-dev.2
+  photo_manager: 0.5.1-dev.3
 
 dev_dependencies:
   flutter_test:
