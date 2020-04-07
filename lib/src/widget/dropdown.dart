@@ -58,7 +58,7 @@ FeatureController<T> _showDropDown<T>({
               child: builder(ctx, close),
               animation: animationController,
               builder: (BuildContext context, Widget child) {
-                print(height * animationController.value);
+                // print(height * animationController.value);
                 return Container(
                   height: height * animationController.value,
                   child: child,

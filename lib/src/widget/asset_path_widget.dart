@@ -70,7 +70,40 @@ class _AssetPathWidgetState extends State<AssetPathWidget> {
     );
   }
 
+  Widget _buildScrollItem(BuildContext context, int index) {
+    final asset = cacheMap[index];
+    if (asset != null) {
+      return widget.buildItem(context, asset, widget.thumbSize);
+    } else {
+      return FutureBuilder<List<AssetEntity>>(
+        future: widget.path.getAssetListRange(start: index, end: index + 1),
+        builder: (ctx, snapshot) {
+          if (!snapshot.hasData || snapshot.data.isEmpty) {
+            return widget.scrollingWidget;
+          }
+          final asset = snapshot.data[0];
+          cacheMap[index] = asset;
+          return widget.buildItem(context, asset, widget.thumbSize);
+        },
+      );
+    }
+  }
+
   Widget _buildItem(BuildContext context, int index) {
+    if (widget.loadWhenScrolling) {
+      return GestureDetector(
+        onTap: () async {
+          var asset = cacheMap[index];
+          if (asset == null) {
+            asset = (await widget.path
+                .getAssetListRange(start: index, end: index + 1))[0];
+            cacheMap[index] = asset;
+          }
+          widget.onAssetItemClick?.call(context, asset);
+        },
+        child: _buildScrollItem(context, index),
+      );
+    }
     return GestureDetector(
       onTap: () async {
         var asset = cacheMap[index];

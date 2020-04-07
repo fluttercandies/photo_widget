@@ -13,10 +13,13 @@ class PhotoPickHomePage extends StatefulWidget {
 
   final PickerDataProvider provider;
 
+  final int thumbSize;
+
   const PhotoPickHomePage({
     Key key,
     @required this.provider,
     this.appBarBuilder,
+    this.thumbSize = 100,
   }) : super(key: key);
 
   @override
@@ -73,6 +76,7 @@ class _PhotoPickHomePageState extends State<PhotoPickHomePage> {
           onAssetItemClick: (ctx, asset) {
             print(asset);
           },
+          thumbSize: widget.thumbSize,
         ),
       ),
     );
