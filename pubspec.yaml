@@ -1,7 +1,7 @@
 name: photo_widget
 description: A new Flutter package project.
 version: 0.0.1
-homepage: https://github.com/Caijinglong
+homepage: https://github.com/fluttercandies/photo_widget
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
