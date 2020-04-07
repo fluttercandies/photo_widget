@@ -2,13 +2,9 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import '../photo_provider.dart';
-import 'pick_checkbox.dart';
-import 'pick_color_mask.dart';
-
 typedef Widget AssetWidgetBuilder(
   BuildContext context,
-  AssetEntity path,
+  AssetEntity asset,
   int thumbSize,
 );
 
@@ -68,73 +64,6 @@ class AssetBigPreviewWidget extends StatelessWidget {
   }
 }
 
-class PickAssetWidget extends StatelessWidget {
-  final AssetEntity asset;
-  final int thumbSize;
-  final PickerDataProvider provider;
-  final Function onTap;
-  final PickColorMaskBuilder pickColorMaskBuilder;
-  final PickedCheckboxBuilder pickedCheckboxBuilder;
-
-  const PickAssetWidget({
-    Key key,
-    @required this.asset,
-    @required this.provider,
-    this.thumbSize = 100,
-    this.onTap,
-    this.pickColorMaskBuilder = PickColorMask.buildWidget,
-    this.pickedCheckboxBuilder,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final pickMask = AnimatedBuilder(
-      animation: provider,
-      builder: (_, __) {
-        final pickIndex = provider.pickIndex(asset);
-        final picked = pickIndex >= 0;
-        return pickColorMaskBuilder?.call(context, picked) ??
-            PickColorMask(
-              picked: picked,
-            );
-      },
-    );
-
-    final checkWidget = AnimatedBuilder(
-      animation: provider,
-      builder: (_, __) {
-        final pickIndex = provider.pickIndex(asset);
-        return pickedCheckboxBuilder?.call(context, pickIndex) ??
-            PickedCheckbox(
-              onClick: () {
-                provider.pickEntity(asset);
-              },
-              checkIndex: pickIndex,
-            );
-      },
-    );
-
-    return GestureDetector(
-      child: Stack(
-        children: <Widget>[
-          Positioned.fill(
-            child: Hero(
-              tag: asset,
-              child: AssetWidget(
-                asset: asset,
-                thumbSize: thumbSize,
-              ),
-            ),
-          ),
-          pickMask,
-          checkWidget,
-        ],
-      ),
-      onTap: onTap,
-    );
-  }
-}
-
 class AssetEntityFileImage extends ImageProvider<AssetEntityFileImage> {
   final AssetEntity entity;
   final double scale;
@@ -164,6 +93,20 @@ class AssetEntityFileImage extends ImageProvider<AssetEntityFileImage> {
       ImageConfiguration configuration) async {
     return this;
   }
+
+  bool operator ==(other) {
+    if (identical(other, this)) {
+      return true;
+    }
+    if (other is! AssetEntityFileImage) {
+      return false;
+    }
+    final AssetEntityFileImage o = other;
+    return o.entity == entity && o.scale == this.scale;
+  }
+
+  @override
+  int get hashCode => hashValues(entity, scale);
 }
 
 class AssetEntityThumbImage extends ImageProvider<AssetEntityThumbImage> {
@@ -210,10 +153,11 @@ class AssetEntityThumbImage extends ImageProvider<AssetEntityThumbImage> {
     }
     final AssetEntityThumbImage o = other;
     return (o.entity == entity &&
-        o.width == entity.width &&
-        o.height == entity.height);
+        o.scale == scale &&
+        o.width == width &&
+        o.height == height);
   }
 
   @override
-  int get hashCode => entity.hashCode * 2 + width * 2 + height * 2;
+  int get hashCode => hashValues(entity, scale, width, height);
 }

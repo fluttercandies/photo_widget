@@ -17,6 +17,7 @@ class AssetPathWidget extends StatefulWidget {
   final int thumbSize;
   final Widget scrollingWidget;
   final double itemRatio;
+  final bool loadWhenScrolling;
   final double dividerWidth;
   final Color dividerColor;
   final OnAssetItemClick onAssetItemClick;
@@ -32,6 +33,7 @@ class AssetPathWidget extends StatefulWidget {
     this.dividerWidth = 1,
     this.dividerColor = const Color(0xFF313434),
     this.onAssetItemClick,
+    this.loadWhenScrolling = false,
   }) : super(key: key);
 
   @override

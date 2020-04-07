@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../photo_provider.dart';
-import 'dropdown_gallery_picker.dart';
+import '../../photo_provider.dart';
+import '../current_path_selector.dart';
 import 'pick_sure_button.dart';
 
 class PickAppBar extends StatefulWidget with PreferredSizeWidget {
@@ -40,6 +40,7 @@ class _PickAppBarState extends State<PickAppBar> {
         right: false,
         child: Container(
           height: widget.height,
+          padding: const EdgeInsetsDirectional.only(end: 10),
           child: Row(
             children: <Widget>[
               buildLeading(),
@@ -47,10 +48,7 @@ class _PickAppBarState extends State<PickAppBar> {
               Expanded(
                 child: Container(),
               ),
-              Padding(
-                padding: const EdgeInsetsDirectional.only(end: 10),
-                child: buildSureButton(),
-              ),
+              buildSureButton(),
             ],
           ),
         ),

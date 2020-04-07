@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_widget/src/widget/asset_widget.dart';
 
 import '../photo_provider.dart';
 import 'dropdown.dart';
+import 'path_cover_widget.dart';
 
 class SelectedPathDropdownButton extends StatelessWidget {
   final PhotoDataProvider provider;
@@ -172,21 +172,9 @@ class _ChangePathWidgetState extends State<ChangePathWidget> {
         children: <Widget>[
           AspectRatio(
             aspectRatio: 1,
-            child: FutureBuilder(
-              future: item.getAssetListRange(start: 0, end: 1),
-              builder: (c, data) {
-                if (!data.hasData) {
-                  return Container();
-                }
-                return Image(
-                  image: AssetEntityThumbImage(
-                    entity: data.data[0],
-                    width: 120,
-                    height: 120,
-                  ),
-                  fit: BoxFit.cover,
-                );
-              },
+            child: AssetPathCoverWidget(
+              entity: item,
+              thumbSize: 100,
             ),
           ),
           Padding(

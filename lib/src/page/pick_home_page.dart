@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 import '../photo_provider.dart';
-import 'asset_path_widget.dart';
-import 'asset_widget.dart';
-import 'pick_app_bar.dart';
+import '../widget/asset_path_widget.dart';
+import '../widget/pick/pick_app_bar.dart';
+import '../widget/pick/pick_asset_widget.dart';
 
 typedef PreferredSizeWidget PickAppBarBuilder(BuildContext context);
 
@@ -50,7 +50,9 @@ class _PhotoPickHomePageState extends State<PhotoPickHomePage> {
     } else {
       appbar = PickAppBar(
         onTapClick: () {
-          Navigator.pop(context, null);
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context, null);
+          }
         },
         provider: widget.provider,
       );

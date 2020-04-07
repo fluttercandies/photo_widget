@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import '../photo_provider.dart';
+import '../../photo_provider.dart';
 
 typedef void PickSureCallback(List<AssetEntity> picked);
 
