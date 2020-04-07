@@ -1,6 +1,6 @@
 name: photo_widget
-description: A new Flutter package project.
-version: 0.0.1
+description: Used to quickly build a library based on photo_manager. Quickly build the album UI you want.
+version: 0.0.2
 homepage: https://github.com/fluttercandies/photo_widget
 
 environment:
@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  photo_manager: 0.5.1-dev.3
+  photo_manager: ^0.5.1-dev.3
 
 dev_dependencies:
   flutter_test:
