@@ -26,6 +26,8 @@ dependencies:
   photo_widget:
     path: ../
   photo_manager: any
+  oktoast: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

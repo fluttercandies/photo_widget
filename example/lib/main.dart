@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_widget/photo_widget.dart';
 
@@ -7,12 +8,15 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return OKToast(
+      backgroundColor: Colors.blue,
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MyHomePage(title: 'Flutter Demo Home Page'),
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -30,6 +34,23 @@ const debugPage = true;
 
 class _MyHomePageState extends State<MyHomePage> {
   final provider = PickerDataProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    provider.max = 3;
+    provider.onPickMax.addListener(onPickMax);
+  }
+
+  void onPickMax() {
+    showToast("Already pick ${provider.max} items.");
+  }
+
+  @override
+  void dispose() {
+    provider.onPickMax.removeListener(onPickMax);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

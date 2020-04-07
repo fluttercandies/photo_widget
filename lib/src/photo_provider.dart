@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
@@ -73,6 +75,11 @@ class PickerDataProvider extends ChangeNotifier with PhotoDataProvider {
   /// Notification when max is modified.
   final maxNotifier = ValueNotifier(0);
 
+  int get max => maxNotifier.value;
+  set max(int value) => maxNotifier.value = value;
+
+  final onPickMax = ChangeNotifier();
+
   /// The currently selected item.
   List<AssetEntity> picked = [];
   bool isOrigin = false;
@@ -81,7 +88,7 @@ class PickerDataProvider extends ChangeNotifier with PhotoDataProvider {
   ///
   /// In single-select mode, when you click an unselected item, the old one is automatically cleared and the new one is selected.
   bool get singlePickMode => _singlePickMode;
-  bool _singlePickMode = true;
+  bool _singlePickMode = false;
   set singlePickMode(bool singlePickMode) {
     _singlePickMode = singlePickMode;
     if (singlePickMode) {
@@ -103,6 +110,10 @@ class PickerDataProvider extends ChangeNotifier with PhotoDataProvider {
       if (picked.contains(entity)) {
         picked.remove(entity);
       } else {
+        if (picked.length == max) {
+          onPickMax.notifyListeners();
+          return;
+        }
         picked.add(entity);
       }
     }
