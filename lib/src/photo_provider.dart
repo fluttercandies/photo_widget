@@ -67,22 +67,44 @@ class PickerDataProvider extends ChangeNotifier with PhotoDataProvider {
       this.pathList.addAll(pathList);
     }
     pickedNotifier.value = picked;
-    this.max.value = max;
+    this.maxNotifier.value = max;
   }
 
-  final max = ValueNotifier(0);
+  /// Notification when max is modified.
+  final maxNotifier = ValueNotifier(0);
 
+  /// The currently selected item.
   List<AssetEntity> picked = [];
   bool isOrigin = false;
+
+  /// Single-select mode, there are subtle differences between interaction and multiple selection.
+  ///
+  /// In single-select mode, when you click an unselected item, the old one is automatically cleared and the new one is selected.
+  bool get singlePickMode => _singlePickMode;
+  bool _singlePickMode = true;
+  set singlePickMode(bool singlePickMode) {
+    _singlePickMode = singlePickMode;
+    if (singlePickMode) {
+      maxNotifier.value = 1;
+    }
+  }
 
   final pickedNotifier = ValueNotifier<List<AssetEntity>>([]);
 
   void pickEntity(AssetEntity entity) {
-    print(picked.contains(entity));
-    if (picked.contains(entity)) {
-      picked.remove(entity);
+    if (singlePickMode) {
+      if (picked.contains(entity)) {
+        picked.remove(entity);
+      } else {
+        picked.clear();
+        picked.add(entity);
+      }
     } else {
-      picked.add(entity);
+      if (picked.contains(entity)) {
+        picked.remove(entity);
+      } else {
+        picked.add(entity);
+      }
     }
     pickedNotifier.value = picked;
     pickedNotifier.notifyListeners();

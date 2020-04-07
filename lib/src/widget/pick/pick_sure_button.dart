@@ -47,7 +47,7 @@ class PickSureButton extends StatelessWidget {
       builder: (_, __) {
         if (builder != null) {
           return InkWell(
-            child: builder(context, picked, provider.max.value),
+            child: builder(context, picked, provider.maxNotifier.value),
             onTap: () => onTap?.call(picked),
           );
         }
@@ -73,7 +73,7 @@ class PickSureButton extends StatelessWidget {
                 child: Container(
                   padding: padding,
                   child: Text(
-                    '$defaultText(${picked.length}/${provider.max.value})',
+                    '$defaultText(${picked.length}/${provider.maxNotifier.value})',
                     style: textStyle,
                   ),
                 ),
