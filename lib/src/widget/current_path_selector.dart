@@ -14,6 +14,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
   final WidgetBuilder buttonBuilder;
   final DropdownWidgetBuilder<AssetPathEntity> dropdownBuilder;
   final ValueChanged<AssetPathEntity> onChanged;
+  final GlobalKey dropdownRelativeKey;
 
   const SelectedPathDropdownButton({
     Key key,
@@ -27,6 +28,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
     ),
     this.padding = const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
     this.onChanged,
+    this.dropdownRelativeKey,
   }) : super(key: key);
 
   @override
@@ -35,6 +37,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
     return AnimatedBuilder(
       animation: provider.currentPathNotifier,
       builder: (_, __) => DropDown<AssetPathEntity>(
+        relativeKey: dropdownRelativeKey,
         child: (buttonBuilder ??
             (context) => buildButton(context, arrowDownNotifier))(context),
         dropdownWidgetBuilder: dropdownBuilder ??

@@ -83,6 +83,7 @@ class DropDown<T> extends StatefulWidget {
   final DropdownWidgetBuilder<T> dropdownWidgetBuilder;
   final ValueChanged<T> onResult;
   final ValueChanged<bool> onShow;
+  final GlobalKey relativeKey;
 
   const DropDown({
     Key key,
@@ -90,6 +91,7 @@ class DropDown<T> extends StatefulWidget {
     @required this.dropdownWidgetBuilder,
     this.onResult,
     this.onShow,
+    this.relativeKey,
   }) : super(key: key);
   @override
   _DropDownState<T> createState() => _DropDownState<T>();
@@ -109,7 +111,8 @@ class _DropDownState<T> extends State<DropDown<T>>
           return;
         }
         final height = MediaQuery.of(context).size.height;
-        RenderBox box = context.findRenderObject();
+        final ctx = widget.relativeKey?.currentContext ?? context;
+        RenderBox box = ctx.findRenderObject();
         final offsetStart = box.localToGlobal(Offset.zero);
         final dialogHeight = height - (offsetStart.dy + box.paintBounds.bottom);
         widget.onShow?.call(true);

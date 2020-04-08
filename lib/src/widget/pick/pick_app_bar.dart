@@ -29,9 +29,12 @@ class PickAppBar extends StatefulWidget with PreferredSizeWidget {
 }
 
 class _PickAppBarState extends State<PickAppBar> {
+  final key = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: key,
       color: widget.backgroundColor,
       child: SafeArea(
         top: true,
@@ -71,6 +74,7 @@ class _PickAppBarState extends State<PickAppBar> {
     return Container(
       height: 30,
       child: SelectedPathDropdownButton(
+        dropdownRelativeKey: key,
         provider: widget.provider,
       ),
     );
