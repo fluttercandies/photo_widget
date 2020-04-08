@@ -80,7 +80,14 @@ class PickerDataProvider extends ChangeNotifier with PhotoDataProvider {
 
   /// The currently selected item.
   List<AssetEntity> picked = [];
-  bool isOrigin = false;
+
+  final isOriginNotifier =  ValueNotifier(false);
+
+  bool get isOrigin => isOriginNotifier.value;
+
+  set isOrigin(bool isOrigin) {
+    isOriginNotifier.value = isOrigin;
+  }
 
   /// Single-select mode, there are subtle differences between interaction and multiple selection.
   ///

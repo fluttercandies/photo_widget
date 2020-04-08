@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_widget/src/theme/pick_theme.dart';
 
 import '../photo_provider.dart';
 import '../widget/asset_path_widget.dart';
 import '../widget/pick/pick_app_bar.dart';
 import '../widget/pick/pick_asset_widget.dart';
+import 'pick_detail_page.dart';
 
 typedef PreferredSizeWidget PickAppBarBuilder(BuildContext context);
 
 class PhotoPickHomePage extends StatefulWidget {
   final PickAppBarBuilder appBarBuilder;
-
+  final WidgetBuilder bottomBuilder;
   final PickerDataProvider provider;
-
   final int thumbSize;
+  final PickTheme pickTheme;
+  final Function onTapPreview;
 
   const PhotoPickHomePage({
     Key key,
     @required this.provider,
     this.appBarBuilder,
+    this.bottomBuilder,
     this.thumbSize = 100,
+    this.pickTheme = const PickTheme(),
+    this.onTapPreview,
   }) : super(key: key);
 
   @override
@@ -27,6 +33,8 @@ class PhotoPickHomePage extends StatefulWidget {
 }
 
 class _PhotoPickHomePageState extends State<PhotoPickHomePage> {
+  PickTheme get pickTheme => widget.pickTheme;
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +68,9 @@ class _PhotoPickHomePageState extends State<PhotoPickHomePage> {
         provider: widget.provider,
       );
     }
+    final bottomBar = widget.bottomBuilder?.call(context) ??
+        _buildBottomBar(context, widget.provider);
+
     return Scaffold(
       appBar: appbar,
       body: AnimatedBuilder(
@@ -78,6 +89,83 @@ class _PhotoPickHomePageState extends State<PhotoPickHomePage> {
           },
           thumbSize: widget.thumbSize,
         ),
+      ),
+      bottomNavigationBar: bottomBar,
+    );
+  }
+
+  Widget _buildBottomBar(BuildContext context, PickerDataProvider provider) {
+    final originCheck = AnimatedBuilder(
+      animation: provider.isOriginNotifier,
+      builder: (ctx, __) {
+        final theme = Theme.of(ctx).copyWith(
+          disabledColor: pickTheme.textColor,
+          unselectedWidgetColor: pickTheme.textColor,
+        );
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            provider.isOrigin = !provider.isOrigin;
+          },
+          child: AbsorbPointer(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Theme(
+                  data: theme,
+                  child: Radio<bool>(
+                    value: true,
+                    groupValue: provider.isOrigin,
+                    onChanged: (_) {},
+                    activeColor: pickTheme.textColor,
+                  ),
+                ),
+                Text(
+                  "原图",
+                  style: TextStyle(color: pickTheme.textColor),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    final previewButton = AnimatedBuilder(
+      animation: provider.pickedNotifier,
+      builder: (_, __) {
+        return FlatButton(
+          disabledTextColor: pickTheme.disableColor,
+          textColor: pickTheme.textColor,
+          onPressed: provider.picked.isEmpty
+              ? null
+              : () {
+                  if (widget.onTapPreview != null) {
+                    widget.onTapPreview?.call();
+                  } else {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => PickDetailPage()),
+                    );
+                  }
+                },
+          child: Text(
+            '预览',
+          ),
+        );
+      },
+    );
+    return Container(
+      color: widget.pickTheme.backgroundColor,
+      height: 50,
+      child: Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: previewButton,
+          ),
+          Center(
+            child: originCheck,
+          ),
+        ],
       ),
     );
   }
