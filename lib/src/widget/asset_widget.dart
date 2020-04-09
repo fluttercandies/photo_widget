@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -169,7 +170,7 @@ class PathItemImageProvider extends ImageProvider<PathItemImageProvider> {
   final double height;
   final double scale;
 
-  PathItemImageProvider({
+  const PathItemImageProvider({
     @required this.path,
     @required this.index,
     this.width = double.infinity,
@@ -198,7 +199,13 @@ class PathItemImageProvider extends ImageProvider<PathItemImageProvider> {
     if (h == double.infinity) {
       h = asset.height / 2;
     }
-    final bytes = await asset.thumbDataWithSize(w.toInt(), w.toInt());
+    Uint8List bytes;
+
+    if (w == 0 || h == 0) {
+      bytes = await asset.thumbDataWithSize(1080, 1080);
+    } else {
+      bytes = await asset.thumbDataWithSize(w.toInt(), w.toInt());
+    }
     return decode(bytes);
   }
 

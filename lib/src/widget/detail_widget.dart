@@ -63,10 +63,13 @@ class _PathDetailWidgetState extends State<PathDetailWidget> {
   }
 
   Widget _buildItem(BuildContext context, int index) {
+    final size = MediaQuery.of(context).size;
     return Image(
       image: PathItemImageProvider(
         index: index,
         path: widget.path,
+        width: size.width,
+        height: size.height,
       ),
     );
   }
