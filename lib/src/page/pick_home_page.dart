@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_widget/src/theme/pick_theme.dart';
+import 'package:photo_widget/src/widget/detail_widget.dart';
 
 import '../photo_provider.dart';
 import '../widget/asset_path_widget.dart';
@@ -84,8 +85,16 @@ class _PhotoPickHomePageState extends State<PhotoPickHomePage> {
               thumbSize: thumbSize,
             );
           },
-          onAssetItemClick: (ctx, asset) {
-            print(asset);
+          onAssetItemClick: (ctx, asset, index) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PathDetailWidget(
+                  path: widget.provider.currentPath,
+                  initIndex: index,
+                ),
+              ),
+            );
           },
           thumbSize: widget.thumbSize,
         ),

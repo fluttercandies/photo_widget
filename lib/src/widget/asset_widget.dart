@@ -161,3 +161,71 @@ class AssetEntityThumbImage extends ImageProvider<AssetEntityThumbImage> {
   @override
   int get hashCode => hashValues(entity, scale, width, height);
 }
+
+class PathItemImageProvider extends ImageProvider<PathItemImageProvider> {
+  final AssetPathEntity path;
+  final int index;
+  final double width;
+  final double height;
+  final double scale;
+
+  PathItemImageProvider({
+    @required this.path,
+    @required this.index,
+    this.width = double.infinity,
+    this.height = double.infinity,
+    this.scale = 1.0,
+  });
+
+  @override
+  ImageStreamCompleter load(PathItemImageProvider key, DecoderCallback decode) {
+    return MultiFrameImageStreamCompleter(
+      codec: _loadAsync(key, decode),
+      scale: scale,
+    );
+  }
+
+  Future<ui.Codec> _loadAsync(PathItemImageProvider key, decode) async {
+    assert(key == this);
+    var assets = await path.getAssetListRange(start: index, end: index + 1);
+    var asset = assets[0];
+    var w = width;
+    if (w == double.infinity) {
+      w = asset.width / 2;
+    }
+
+    var h = height;
+    if (h == double.infinity) {
+      h = asset.height / 2;
+    }
+    final bytes = await asset.thumbDataWithSize(w.toInt(), w.toInt());
+    return decode(bytes);
+  }
+
+  @override
+  Future<PathItemImageProvider> obtainKey(
+      ImageConfiguration configuration) async {
+    return this;
+  }
+
+  @override
+  int get hashCode => hashValues(path, index, width, height, scale);
+
+  @override
+  bool operator ==(other) {
+    if (identical(other, this)) {
+      return true;
+    }
+    if (other is! PathItemImageProvider) {
+      return false;
+    }
+
+    PathItemImageProvider o = other;
+
+    return o.index == index &&
+        o.path == path &&
+        o.width == width &&
+        o.height == height &&
+        o.scale == scale;
+  }
+}

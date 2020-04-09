@@ -8,7 +8,7 @@ import 'scrolling_placeholder.dart';
 typedef Widget AssetPathWidgetBuilder(
     BuildContext context, AssetPathEntity path);
 
-typedef void OnAssetItemClick(BuildContext context, AssetEntity entity);
+typedef void OnAssetItemClick(BuildContext context, AssetEntity entity,int index);
 
 class AssetPathWidget extends StatefulWidget {
   final AssetPathEntity path;
@@ -99,7 +99,7 @@ class _AssetPathWidgetState extends State<AssetPathWidget> {
                 .getAssetListRange(start: index, end: index + 1))[0];
             cacheMap[index] = asset;
           }
-          widget.onAssetItemClick?.call(context, asset);
+          widget.onAssetItemClick?.call(context, asset,index);
         },
         child: _buildScrollItem(context, index),
       );
@@ -112,7 +112,7 @@ class _AssetPathWidgetState extends State<AssetPathWidget> {
               .getAssetListRange(start: index, end: index + 1))[0];
           cacheMap[index] = asset;
         }
-        widget.onAssetItemClick?.call(context, asset);
+        widget.onAssetItemClick?.call(context, asset,index);
       },
       child: _WrapItem(
         cacheMap: cacheMap,
