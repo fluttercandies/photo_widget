@@ -25,7 +25,13 @@ class _PickedDetailWidgetState extends State<PickedDetailWidget> {
     );
   }
 
-  Widget _buildItem(BuildContext context, int index) {}
+  Widget _buildItem(BuildContext context, int index) {
+    return Image(
+      image: AssetEntityFileImage(
+        widget.entityList[index],
+      ),
+    );
+  }
 }
 
 class PathDetailWidget extends StatefulWidget {
@@ -49,7 +55,7 @@ class _PathDetailWidgetState extends State<PathDetailWidget> {
   void initState() {
     super.initState();
     controller = PageController(
-      initialPage: widget.initIndex,
+      initialPage: widget.initIndex ?? 0,
     );
   }
 

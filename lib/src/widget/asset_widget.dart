@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -85,8 +86,13 @@ class AssetEntityFileImage extends ImageProvider<AssetEntityFileImage> {
   Future<ui.Codec> _loadAsync(
       AssetEntityFileImage key, DecoderCallback decode) async {
     assert(key == this);
-    final bytes = (await entity.file).readAsBytesSync();
-    return decode(bytes);
+    if (Platform.isIOS) {
+      final asset = await entity.thumbDataWithSize(entity.width, entity.height);
+      return decode(asset);
+    } else {
+      final bytes = (await entity.file).readAsBytesSync();
+      return decode(bytes);
+    }
   }
 
   @override

@@ -152,7 +152,11 @@ class _PhotoPickHomePageState extends State<PhotoPickHomePage> {
                     widget.onTapPreview?.call();
                   } else {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => PickDetailPage()),
+                      MaterialPageRoute(
+                        builder: (_) => PickedDetailWidget(
+                          entityList: provider.picked,
+                        ),
+                      ),
                     );
                   }
                 },
