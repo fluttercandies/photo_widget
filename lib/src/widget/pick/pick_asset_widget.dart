@@ -10,14 +10,14 @@ class PickAssetWidget extends StatelessWidget {
   final AssetEntity asset;
   final int thumbSize;
   final PickerDataProvider provider;
-  final Function onTap;
+  final Function? onTap;
   final PickColorMaskBuilder pickColorMaskBuilder;
-  final PickedCheckboxBuilder pickedCheckboxBuilder;
+  final PickedCheckboxBuilder? pickedCheckboxBuilder;
 
   const PickAssetWidget({
-    Key key,
-    @required this.asset,
-    @required this.provider,
+    Key? key,
+    required this.asset,
+    required this.provider,
     this.thumbSize = 100,
     this.onTap,
     this.pickColorMaskBuilder = PickColorMask.buildWidget,
@@ -31,10 +31,10 @@ class PickAssetWidget extends StatelessWidget {
       builder: (_, __) {
         final pickIndex = provider.pickIndex(asset);
         final picked = pickIndex >= 0;
-        return pickColorMaskBuilder?.call(context, picked) ??
-            PickColorMask(
+        return pickColorMaskBuilder.call(context, picked);
+        /*    PickColorMask(
               picked: picked,
-            );
+            ); */
       },
     );
 
@@ -68,7 +68,7 @@ class PickAssetWidget extends StatelessWidget {
           checkWidget,
         ],
       ),
-      onTap: onTap,
+      onTap: onTap as void Function()?,
     );
   }
 }

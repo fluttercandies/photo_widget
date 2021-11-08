@@ -3,11 +3,11 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_widget/src/widget/detail_widget.dart';
 
 class PickDetailPage extends StatelessWidget {
-  final int initIndex;
-  final AssetPathEntity path;
+  final int? initIndex;
+  final AssetPathEntity? path;
 
   const PickDetailPage({
-    Key key,
+    Key? key,
     this.path,
     this.initIndex,
   }) : super(key: key);
@@ -28,10 +28,10 @@ class PickDetailPage extends StatelessWidget {
 }
 
 class OnlyPickDetailPage extends StatelessWidget {
-  final int initIndex;
+  final int? initIndex;
 
   const OnlyPickDetailPage({
-    Key key,
+    Key? key,
     this.initIndex,
   }) : super(key: key);
 

@@ -22,9 +22,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -113,12 +113,12 @@ class _MyHomePageState extends State<MyHomePage> {
     return AssetPathWidget(
       path: provider.currentPath,
       buildItem: (context, asset, size) {
-        return PickAssetWidget(
-          asset: asset,
+        /*  return PickAssetWidget(
+          asset: asset!,
           provider: provider,
           thumbSize: size,
-        );
-        // return AssetWidget(asset: asset);
+        ); */
+        return AssetWidget(asset: asset!);
       },
     );
   }

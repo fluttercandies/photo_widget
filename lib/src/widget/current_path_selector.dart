@@ -11,14 +11,14 @@ class SelectedPathDropdownButton extends StatelessWidget {
   final Color backgroundColor;
   final TextStyle textStyle;
   final EdgeInsetsGeometry padding;
-  final WidgetBuilder buttonBuilder;
-  final DropdownWidgetBuilder<AssetPathEntity> dropdownBuilder;
-  final ValueChanged<AssetPathEntity> onChanged;
-  final GlobalKey dropdownRelativeKey;
+  final WidgetBuilder? buttonBuilder;
+  final DropdownWidgetBuilder<AssetPathEntity>? dropdownBuilder;
+  final ValueChanged<AssetPathEntity>? onChanged;
+  final GlobalKey? dropdownRelativeKey;
 
   const SelectedPathDropdownButton({
-    Key key,
-    @required this.provider,
+    Key? key,
+    required this.provider,
     this.backgroundColor = const Color(0xFF4C4C4C),
     this.buttonBuilder,
     this.dropdownBuilder,
@@ -36,24 +36,24 @@ class SelectedPathDropdownButton extends StatelessWidget {
     final arrowDownNotifier = ValueNotifier(false);
     return AnimatedBuilder(
       animation: provider.currentPathNotifier,
-      builder: (_, __) => DropDown<AssetPathEntity>(
+      builder: (_, __) => DropDown<AssetPathEntity?>(
         relativeKey: dropdownRelativeKey,
         child: (buttonBuilder ??
             (context) => buildButton(context, arrowDownNotifier))(context),
         dropdownWidgetBuilder: dropdownBuilder ??
             (BuildContext context, close) {
               return ChangePathWidget(
-                provider: provider,
+                provider: provider as PickerDataProvider,
                 close: close,
               );
             },
-        onResult: (AssetPathEntity value) {
+        onResult: (AssetPathEntity? value) {
           if (onChanged == null) {
             if (value != null) {
               provider.currentPath = value;
             }
           } else {
-            onChanged(value);
+            onChanged!(value!);
           }
         },
         onShow: (value) {
@@ -88,7 +88,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              provider.currentPath.name,
+              provider.currentPath!.name,
               style: textStyle,
             ),
             Container(
@@ -103,7 +103,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
                   color: const Color(0xFF232323),
                 ),
                 animation: arrowDownNotifier,
-                builder: (BuildContext context, Widget child) {
+                builder: (BuildContext context, Widget? child) {
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     // transform: Matrix4.translationValues(1, 1, 0)
@@ -122,14 +122,14 @@ class SelectedPathDropdownButton extends StatelessWidget {
 
 class ChangePathWidget extends StatefulWidget {
   final PickerDataProvider provider;
-  final IndexedWidgetBuilder itemBuilder;
+  final IndexedWidgetBuilder? itemBuilder;
   final double itemHeight;
   final ValueSetter<AssetPathEntity> close;
 
   const ChangePathWidget({
-    Key key,
-    @required this.provider,
-    @required this.close,
+    Key? key,
+    required this.provider,
+    required this.close,
     this.itemBuilder,
     this.itemHeight = 65,
   }) : super(key: key);
@@ -141,12 +141,12 @@ class ChangePathWidget extends StatefulWidget {
 class _ChangePathWidgetState extends State<ChangePathWidget> {
   PickerDataProvider get provider => widget.provider;
 
-  ScrollController controller;
+  ScrollController? controller;
 
   @override
   void initState() {
     super.initState();
-    final index = provider.pathList.indexOf(provider.currentPath);
+    final index = provider.pathList.indexOf(provider.currentPath!);
     controller =
         ScrollController(initialScrollOffset: widget.itemHeight * index);
   }
@@ -216,7 +216,7 @@ class _ChangePathWidgetState extends State<ChangePathWidget> {
       child: w,
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        widget?.close?.call(item);
+        widget.close.call(item);
       },
     );
   }

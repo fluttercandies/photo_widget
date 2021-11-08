@@ -7,13 +7,13 @@ class PickAppBar extends StatefulWidget with PreferredSizeWidget {
   final double height;
   final Color backgroundColor;
   final Color iconColor;
-  final Function onTapClick;
-  final Widget leading;
+  final Function? onTapClick;
+  final Widget? leading;
   final PickerDataProvider provider;
 
   PickAppBar({
-    Key key,
-    @required this.provider,
+    Key? key,
+    required this.provider,
     this.height = kToolbarHeight,
     this.backgroundColor = const Color(0xFF333333),
     this.iconColor = Colors.white,
@@ -66,7 +66,7 @@ class _PickAppBarState extends State<PickAppBar> {
           icon: Icon(
             Icons.close,
           ),
-          onPressed: widget.onTapClick,
+          onPressed: widget.onTapClick as void Function()?,
         );
   }
 

@@ -4,8 +4,8 @@ class ObserverMap<K, V> with MapMixin<K, V> {
   final _map = <K, V>{};
 
   @override
-  V operator [](Object key) {
-    return _map[key];
+  V? operator [](Object? key) {
+    return _map[key as K];
   }
 
   @override
@@ -24,7 +24,7 @@ class ObserverMap<K, V> with MapMixin<K, V> {
   Iterable<K> get keys => _map.keys;
 
   @override
-  V remove(Object key) {
+  V? remove(Object? key) {
     print("on map remove $key");
     return _map.remove(key);
   }

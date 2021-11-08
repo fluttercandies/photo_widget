@@ -7,8 +7,8 @@ class PickedDetailWidget extends StatefulWidget {
   final List<AssetEntity> entityList;
 
   const PickedDetailWidget({
-    Key key,
-    @required this.entityList,
+    Key? key,
+    required this.entityList,
     int initIndex = 0,
   }) : super(key: key);
 
@@ -35,12 +35,12 @@ class _PickedDetailWidgetState extends State<PickedDetailWidget> {
 }
 
 class PathDetailWidget extends StatefulWidget {
-  final AssetPathEntity path;
-  final int initIndex;
+  final AssetPathEntity? path;
+  final int? initIndex;
 
   const PathDetailWidget({
-    Key key,
-    @required this.path,
+    Key? key,
+    required this.path,
     this.initIndex = 0,
   }) : super(key: key);
 
@@ -49,7 +49,7 @@ class PathDetailWidget extends StatefulWidget {
 }
 
 class _PathDetailWidgetState extends State<PathDetailWidget> {
-  PageController controller;
+  PageController? controller;
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class _PathDetailWidgetState extends State<PathDetailWidget> {
   Widget build(BuildContext context) {
     return PageView.builder(
       itemBuilder: _buildItem,
-      itemCount: widget.path.assetCount,
+      itemCount: widget.path!.assetCount,
       controller: controller,
     );
   }
