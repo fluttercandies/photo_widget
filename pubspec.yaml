@@ -4,13 +4,13 @@ version: 0.0.3
 homepage: https://github.com/fluttercandies/photo_widget
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
-  photo_manager: ^0.5.1-dev.3
+  photo_manager: ^1.3.9+1
 
 dev_dependencies:
   flutter_test:

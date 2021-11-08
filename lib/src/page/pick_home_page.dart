@@ -12,16 +12,16 @@ import 'pick_detail_page.dart';
 typedef PreferredSizeWidget PickAppBarBuilder(BuildContext context);
 
 class PhotoPickHomePage extends StatefulWidget {
-  final PickAppBarBuilder appBarBuilder;
-  final WidgetBuilder bottomBuilder;
+  final PickAppBarBuilder? appBarBuilder;
+  final WidgetBuilder? bottomBuilder;
   final PickerDataProvider provider;
   final int thumbSize;
   final PickTheme pickTheme;
-  final Function onTapPreview;
+  final Function? onTapPreview;
 
   const PhotoPickHomePage({
-    Key key,
-    @required this.provider,
+    Key? key,
+    required this.provider,
     this.appBarBuilder,
     this.bottomBuilder,
     this.thumbSize = 100,
@@ -41,6 +41,7 @@ class _PhotoPickHomePageState extends State<PhotoPickHomePage> {
     super.initState();
     if (widget.provider.pathList.isEmpty) {
       PhotoManager.getAssetPathList().then((value) {
+      
         widget.provider.resetPathList(value);
       });
     }
@@ -50,12 +51,12 @@ class _PhotoPickHomePageState extends State<PhotoPickHomePage> {
   Widget build(BuildContext context) {
     PreferredSizeWidget appbar;
     if (widget.appBarBuilder != null) {
-      final size = widget.appBarBuilder(context).preferredSize;
+      final size = widget.appBarBuilder!(context).preferredSize;
       appbar = PreferredSize(
         preferredSize: size,
         child: Builder(
           builder: (BuildContext context) {
-            return widget.appBarBuilder(context);
+            return widget.appBarBuilder!(context);
           },
         ),
       );
@@ -76,11 +77,11 @@ class _PhotoPickHomePageState extends State<PhotoPickHomePage> {
       appBar: appbar,
       body: AnimatedBuilder(
         animation: widget.provider.currentPathNotifier,
-        builder: (BuildContext context, Widget child) => AssetPathWidget(
+        builder: (BuildContext context, Widget? child) => AssetPathWidget(
           path: widget.provider.currentPath,
           buildItem: (ctx, asset, thumbSize) {
             return PickAssetWidget(
-              asset: asset,
+              asset: asset!,
               provider: widget.provider,
               thumbSize: thumbSize,
             );

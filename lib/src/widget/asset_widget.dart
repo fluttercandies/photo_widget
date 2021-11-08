@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -6,7 +7,7 @@ import 'package:photo_manager/photo_manager.dart';
 
 typedef Widget AssetWidgetBuilder(
   BuildContext context,
-  AssetEntity asset,
+  AssetEntity? asset,
   int thumbSize,
 );
 
@@ -15,15 +16,15 @@ class AssetWidget extends StatelessWidget {
   final int thumbSize;
 
   const AssetWidget({
-    Key key,
-    @required this.asset,
+    Key? key,
+    required this.asset,
     this.thumbSize = 100,
   }) : super(key: key);
 
   static AssetWidget buildWidget(
-      BuildContext context, AssetEntity asset, int thumbSize) {
+      BuildContext context, AssetEntity? asset, int thumbSize) {
     return AssetWidget(
-      asset: asset,
+      asset: asset!,
       thumbSize: thumbSize,
     );
   }
@@ -45,8 +46,8 @@ class AssetBigPreviewWidget extends StatelessWidget {
   final AssetEntity asset;
 
   const AssetBigPreviewWidget({
-    Key key,
-    @required this.asset,
+    Key? key,
+    required this.asset,
   }) : super(key: key);
 
   static AssetWidget buildWidget(
@@ -87,10 +88,11 @@ class AssetEntityFileImage extends ImageProvider<AssetEntityFileImage> {
       AssetEntityFileImage key, DecoderCallback decode) async {
     assert(key == this);
     if (Platform.isIOS) {
-      final asset = await entity.thumbDataWithSize(entity.width, entity.height);
+      final asset = await (entity.thumbDataWithSize(entity.width, entity.height)
+          as FutureOr<Uint8List>);
       return decode(asset);
     } else {
-      final bytes = (await entity.file).readAsBytesSync();
+      final bytes = (await entity.file)!.readAsBytesSync();
       return decode(bytes);
     }
   }
@@ -123,9 +125,9 @@ class AssetEntityThumbImage extends ImageProvider<AssetEntityThumbImage> {
   final double scale;
 
   AssetEntityThumbImage({
-    @required this.entity,
-    int width,
-    int height,
+    required this.entity,
+    int? width,
+    int? height,
     this.scale = 1.0,
   })  : width = width ?? entity.width,
         height = height ?? entity.height;
@@ -141,8 +143,8 @@ class AssetEntityThumbImage extends ImageProvider<AssetEntityThumbImage> {
   Future<ui.Codec> _loadAsync(
       AssetEntityThumbImage key, DecoderCallback decode) async {
     assert(key == this);
-    final bytes = await entity.thumbDataWithSize(width, height);
-    return decode(bytes);
+    final bytes = await (entity.thumbDataWithSize(width, height));
+     return decode(bytes!);
   }
 
   @override
@@ -170,15 +172,15 @@ class AssetEntityThumbImage extends ImageProvider<AssetEntityThumbImage> {
 }
 
 class PathItemImageProvider extends ImageProvider<PathItemImageProvider> {
-  final AssetPathEntity path;
+  final AssetPathEntity? path;
   final int index;
   final double width;
   final double height;
   final double scale;
 
   const PathItemImageProvider({
-    @required this.path,
-    @required this.index,
+    required this.path,
+    required this.index,
     this.width = double.infinity,
     this.height = double.infinity,
     this.scale = 1.0,
@@ -187,14 +189,14 @@ class PathItemImageProvider extends ImageProvider<PathItemImageProvider> {
   @override
   ImageStreamCompleter load(PathItemImageProvider key, DecoderCallback decode) {
     return MultiFrameImageStreamCompleter(
-      codec: _loadAsync(key, decode),
+      codec: _loadAsync(key, decode).then((value) => value!),
       scale: scale,
     );
   }
 
-  Future<ui.Codec> _loadAsync(PathItemImageProvider key, decode) async {
+  Future<ui.Codec?> _loadAsync(PathItemImageProvider key, decode) async {
     assert(key == this);
-    var assets = await path.getAssetListRange(start: index, end: index + 1);
+    var assets = await path!.getAssetListRange(start: index, end: index + 1);
     var asset = assets[0];
     var w = width;
     if (w == double.infinity) {
@@ -205,7 +207,7 @@ class PathItemImageProvider extends ImageProvider<PathItemImageProvider> {
     if (h == double.infinity) {
       h = asset.height / 2;
     }
-    Uint8List bytes;
+    Uint8List? bytes;
 
     if (w == 0 || h == 0) {
       bytes = await asset.thumbDataWithSize(1080, 1080);

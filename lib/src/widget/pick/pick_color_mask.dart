@@ -6,9 +6,9 @@ class PickColorMask extends StatelessWidget {
   final Color maskColor;
   final bool picked;
   const PickColorMask({
-    Key key,
+    Key? key,
     this.maskColor = const Color(0x99000000),
-    @required this.picked,
+    required this.picked,
   }) : super(key: key);
 
   @override

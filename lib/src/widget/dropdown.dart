@@ -16,11 +16,11 @@ class FeatureController<T> {
 }
 
 FeatureController<T> _showDropDown<T>({
-  @required BuildContext context,
-  DropdownWidgetBuilder<T> builder,
-  double height,
+  required BuildContext context,
+  DropdownWidgetBuilder<T>? builder,
+  required double height,
   Duration animationDuration = const Duration(milliseconds: 250),
-  @required TickerProvider tickerProvider,
+  required TickerProvider tickerProvider,
 }) {
   final animationController = AnimationController(
     vsync: tickerProvider,
@@ -28,8 +28,8 @@ FeatureController<T> _showDropDown<T>({
   );
   final completer = Completer<T>();
   var isReply = false;
-  OverlayEntry entry;
-  void close(T value) async {
+  OverlayEntry? entry;
+  void close(T? value) async {
     if (isReply) {
       return;
     }
@@ -55,9 +55,9 @@ FeatureController<T> _showDropDown<T>({
               close(null);
             },
             child: AnimatedBuilder(
-              child: builder(ctx, close),
+              child: builder!(ctx, close),
               animation: animationController,
-              builder: (BuildContext context, Widget child) {
+              builder: (BuildContext context, Widget? child) {
                 // print(height * animationController.value);
                 return Container(
                   height: height * animationController.value,
@@ -70,7 +70,7 @@ FeatureController<T> _showDropDown<T>({
       ),
     );
   });
-  Overlay.of(context).insert(entry);
+  Overlay.of(context)!.insert(entry);
   animationController.animateTo(1);
   return FeatureController(
     completer,
@@ -81,14 +81,14 @@ FeatureController<T> _showDropDown<T>({
 class DropDown<T> extends StatefulWidget {
   final Widget child;
   final DropdownWidgetBuilder<T> dropdownWidgetBuilder;
-  final ValueChanged<T> onResult;
-  final ValueChanged<bool> onShow;
-  final GlobalKey relativeKey;
+  final ValueChanged<T>? onResult;
+  final ValueChanged<bool>? onShow;
+  final GlobalKey? relativeKey;
 
   const DropDown({
-    Key key,
-    @required this.child,
-    @required this.dropdownWidgetBuilder,
+    Key? key,
+    required this.child,
+    required this.dropdownWidgetBuilder,
     this.onResult,
     this.onShow,
     this.relativeKey,
@@ -97,9 +97,9 @@ class DropDown<T> extends StatefulWidget {
   _DropDownState<T> createState() => _DropDownState<T>();
 }
 
-class _DropDownState<T> extends State<DropDown<T>>
+class _DropDownState<T> extends State<DropDown<T?>>
     with TickerProviderStateMixin {
-  FeatureController<T> controller;
+  FeatureController<T?>? controller;
   var isShow = false;
   @override
   Widget build(BuildContext context) {
@@ -107,28 +107,28 @@ class _DropDownState<T> extends State<DropDown<T>>
       child: widget.child,
       onTap: () async {
         if (controller != null) {
-          controller.close(null);
+          controller!.close(null);
           return;
         }
         final height = MediaQuery.of(context).size.height;
         final ctx = widget.relativeKey?.currentContext ?? context;
-        RenderBox box = ctx.findRenderObject();
+        RenderBox box = ctx.findRenderObject() as RenderBox;
         final offsetStart = box.localToGlobal(Offset.zero);
         final dialogHeight = height - (offsetStart.dy + box.paintBounds.bottom);
         widget.onShow?.call(true);
-        controller = _showDropDown<T>(
+        controller = _showDropDown<T?>(
           context: context,
           height: dialogHeight,
           builder: (_, close) {
-            return widget.dropdownWidgetBuilder?.call(context, close);
+            return widget.dropdownWidgetBuilder.call(context, close);
           },
           tickerProvider: this,
         );
         isShow = true;
-        final result = await controller.closed;
+        final result = await controller!.closed;
         controller = null;
         isShow = false;
-        widget.onResult(result);
+        widget.onResult!(result);
         widget.onShow?.call(false);
       },
     );
