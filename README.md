@@ -23,35 +23,35 @@ import 'package:photo_widget/photo_widget.dart';
 
 Display `AssetPathEntity`
 
-| name            | type               | requied | default value                | description                                                                                                                                                    |
-| --------------- | ------------------ | ------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| path            | AssetPathEntity    | true    |                              | Concepts in photo_manager, used to describe albums                                                                                                             |
-| buildItem       | AssetWidgetBuilder | false   | AssetWidget.buildWidget      | Build items in the list                                                                                                                                        |
-| rowCount        | int                | false   | 4                            | There are several items in a row, see GridView for details                                                                                                     |
-| thumbSize       | int                | false   | 100                          | The size of each item thumbnail                                                                                                                                |
-| scrollingWidget | Widget             | false   | const ScrollingPlaceholder() | Since loading an image is a resource-consuming operation, you only start loading images when the scrolling stops, with a placeholder before loading the image. |
+| name            | type               | required | default value                | description                                                                                                                                                    |
+| --------------- | ------------------ | -------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| path            | AssetPathEntity    | true     |                              | Concepts in photo_manager, used to describe albums                                                                                                             |
+| buildItem       | AssetWidgetBuilder | false    | AssetWidget.buildWidget      | Build items in the list                                                                                                                                        |
+| rowCount        | int                | false    | 4                            | There are several items in a row, see GridView for details                                                                                                     |
+| thumbSize       | int                | false    | 100                          | The size of each item thumbnail                                                                                                                                |
+| scrollingWidget | Widget             | false    | const ScrollingPlaceholder() | Since loading an image is a resource-consuming operation, you only start loading images when the scrolling stops, with a placeholder before loading the image. |
 
 ### AssetWidget
 
 Display `AssetEntity`
 
-| name      | type        | requied | default value | description                                       |
-| --------- | ----------- | ------- | ------------- | ------------------------------------------------- |
-| asset     | AssetEntity | true    |               | Concepts in photo_manager, used to describe asset |
-| thumbSize | int         | false   | 100           | The item thumb size.                              |
+| name      | type        | required | default value | description                                       |
+| --------- | ----------- | -------- | ------------- | ------------------------------------------------- |
+| asset     | AssetEntity | true     |               | Concepts in photo_manager, used to describe asset |
+| thumbSize | int         | false    | 100           | The item thumb size.                              |
 
 ### PickAssetWidget
 
 A widget with a selection box for displaying assets is generally used in scenes where you need to select an image.
 
-| name                  | type                                                                       | requied | default value             | description                                                                              |
-| --------------------- | -------------------------------------------------------------------------- | ------- | ------------------------- | ---------------------------------------------------------------------------------------- |
-| asset                 | AssetEntity                                                                | true    |                           | Concepts in photo_manager, used to describe asset                                        |
-| thumbSize             | int                                                                        | false   | 100                       |                                                                                          |
-| provider              | PickerDataProvider                                                         | true    |                           | This is a provider for picker scenes, and internally maintains the data needed by picker |
-| onTap                 | Function                                                                   | false   |                           | Callback when item is clicked, exception, there is a separate response in checkbox area  |
-| pickColorMaskBuilder  | typedef Widget PickColorMaskBuilder(BuildContext context, bool picked)     | false   | PickColorMask.buildWidget | Used to mask the image when selected or unselected                                       |
-| pickedCheckboxBuilder | typedef Widget PickedCheckboxBuilder(BuildContext context, int checkIndex) | false   |                           | Whether to build the checked flag, the default is a `PickedCheckbox`                     |
+| name                  | type                                                                       | required | default value             | description                                                                              |
+| --------------------- | -------------------------------------------------------------------------- | -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+| asset                 | AssetEntity                                                                | true     |                           | Concepts in photo_manager, used to describe asset                                        |
+| thumbSize             | int                                                                        | false    | 100                       |                                                                                          |
+| provider              | PickerDataProvider                                                         | true     |                           | This is a provider for picker scenes, and internally maintains the data needed by picker |
+| onTap                 | Function                                                                   | false    |                           | Callback when item is clicked, exception, there is a separate response in checkbox area  |
+| pickColorMaskBuilder  | typedef Widget PickColorMaskBuilder(BuildContext context, bool picked)     | false    | PickColorMask.buildWidget | Used to mask the image when selected or unselected                                       |
+| pickedCheckboxBuilder | typedef Widget PickedCheckboxBuilder(BuildContext context, int checkIndex) | false    |                           | Whether to build the checked flag, the default is a `PickedCheckbox`                     |
 
 ### PickColorMask
 
